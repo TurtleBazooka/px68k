@@ -6,14 +6,14 @@
 
 ## License
 * 大元のオリジナルソースの著作は、けんじょさんのWinX68k(けろぴー)です。(http://retropc.net/kenjo)
-* MC68000エミュレータはStephane Dallongeville氏がyabauseの一部としてGPLv2で公開されているものです。
+* c68k(MC68000 Emu.)はStephane Dallongeville氏がyabauseの一部としてGPLv2で公開されているものです。
 * FM音源合成のfmgenは、cisc氏の著作物です。(詳しくはfmgen/readme.txt参照)
 * YMFMはBSD-licensedで公開されています。(https://github.com/aaronsgiles/ymfm)
 
 ## About
 * 単独アプリ形式のエミュレータの改良を目指します。
 * (DWORD)-1 で頻繁に異常終了する問題に対処
-* SDL2/3のTexture,Renderer(GPU)を活用("sdl-gfx"は不要)
+* SDL3のTexture,Renderer(GPU)を活用
 * Support Full-Screen Mode.(`F11`)
 * ソフトキーボード復活(Right click on `F12`Menu mode)
 * SCSI DiskImageサポート(`Can boot from *.HDS`)
@@ -31,13 +31,13 @@
 
 ## for macOS
 * Mac用単独アプリ化ラッパー追加
-* SDL2/3.frameworkでのbuildにも対応
+* SDL3/2.frameworkでのbuildにも対応
 * pngからiconリソース生成機能搭載(% make icon)
 
 ## Need
 * SDL3 (or still support SDL2)(https://www.libsdl.org/)
 * `iplrom.dat` `cgrom.dat` and SCSI-IPL `scsiexrom.dat` into .keropi folder
-* On SDL2,`gamecontrollerdb.txt` into .keropi folder  (https://github.com/gabomdq/SDL_GameControllerDB)
+* On SDL2,`gamecontrollerdb.txt` into .keropi folder (https://github.com/gabomdq/SDL_GameControllerDB)
 * On SDL3,`gamepaddb.txt` into .keropi folder.(change platform `Mac OS X` to `macOS`)
 * cmake and pkg-config build system (if needed)(https://cmake.org)
 * Munt/MT-32 emu (if needed)(https://sourceforge.net/projects/munt/)
@@ -46,17 +46,21 @@
 ## Build (with make)
 
 ```sh
- $ make      (SDL2でLINK Linux/macOS/MinGW)
- $ make mac  (macOS only)
+[for macOS]
+ $ make YMFM=ON mac
  
-[option]
- $ make SDL3=ON  (SDL3 with fmgen for YM2151)
-or
- $ make SDL3=ON YMFM=ON (use YMFM for YM2151)
+[for Linux]
+ $ make YMFM=ON
  
- $ make FLUID=ON (use fluidsynth for MIDI)
- $ make NO_MIDI=ON (No MIDI Support)
+[for Win(MinGW)]
+ $ make YMFM=ON win
 
+[option]
+ $ make YMFM=ON FLUID=ON (use fluidsynth for MIDI)
+or
+ $ make (use fmgen for YM2151)
+or
+ $ make SDL2=ON NO_MIDI=ON (SDL2 with No MIDI Support)
 
  $ make clean (お掃除)
  $ make cgrom (app for Generate cgrom.tmp)
@@ -65,27 +69,27 @@ or
 
 ```sh
 [for macOS]
-$ cmake -G Xcode -S . -B build -D SDL3=ON -D YMFM=ON
+$ cmake -G Xcode -S . -B build -D YMFM=ON
 $ cmake --build build --config Release
 
 [for Linux]
-$ cmake -S . -B build -D SDL3=ON -D YMFM=ON
+$ cmake -S . -B build -D YMFM=ON
 $ cmake --build build --config Release
 
-[for Win.]
- $ cmake -S . -B build -D SDL3=ON -D YMFM=ON
+[for Win(MinGW)]
+ $ cmake -S . -B build -D YMFM=ON
  $ cmake --build build --config Release
  
 [on SDL2 and use fmgen for YM2151]
-$ cmake -S . -B build
+$ cmake -S . -B build -D SDL2=ON
 $ cmake --build build --config (RelWithDebInfo/Debug/MinSizeRel)
 ```
 
 ## Run on command.
 
  ```sh
-  $ ./px68k.sdl2
-  $ ./px68k.sdl2 hoge0.xdf hoge1.xdf hame0.hds hame1.hds
+  $ ./px68k.sdl3
+  $ ./px68k.sdl3 hoge0.xdf hoge1.xdf hame0.hds hame1.hds
  ```
  Support image file (mount and boot)
 
@@ -110,7 +114,6 @@ $ cmake --build build --config (RelWithDebInfo/Debug/MinSizeRel)
  * CyberStickのアナログモードは確認継続中(認識不完全アリ)
  * SDL1のサポートは削除しました。
  * SDL3に正式対応。(SDL2も絶賛サポート中)
- * YMFMによるFM音源サポートはSDL3環境を推奨
  * BigEndianのCPUでは動きません。(例:Wii/U,Mac/G4)
 
 ## How to make `cgrom.tmp`

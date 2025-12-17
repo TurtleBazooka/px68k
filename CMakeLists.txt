@@ -22,10 +22,10 @@ project(px68k VERSION ${PROJECT_VERSION})
 string(TIMESTAMP TIMESTAMP "%Y%m%d")
 
 # == option ==
-option(SDL3 "Use SDL3"        OFF)
-option(NO_MIDI "No MIDI Play" OFF)
-option(FLUID "Use fluidsynth" OFF)
 option(YMFM "Use YMFM"        OFF)
+option(FLUID "Use fluidsynth" OFF)
+option(SDL2 "Use SDL2"        OFF)
+option(NO_MIDI "No MIDI Play" OFF)
 option(NO_MERCURY "No Mercury" ON)
 
 # ==Set compile version ==
@@ -60,16 +60,16 @@ add_definitions(
 	)
 endif()
 
-# == Find SDL2/3 library and add to linker flags ==
-if(SDL3)
-  message(" - define SDL3")
- find_package(SDL3 REQUIRED)
-# find_package(SDL3_ttf REQUIRED)
-else()
+# == Find SDL3/2 library and add to linker flags ==
+if(SDL2)
   message(" - define SDL2")
  add_definitions( -DSDL2 )
  find_package(SDL2 REQUIRED)
 # find_package(SDL2_ttf REQUIRED)
+else()
+  message(" - define SDL3")
+ find_package(SDL3 REQUIRED)
+# find_package(SDL3_ttf REQUIRED)
 endif()
 
 if(APPLE)
@@ -145,13 +145,13 @@ set(x68k_sources
 )
 
 if(YMFM)
-if(SDL3)
+if(SDL2)
 set(fmgen_sources
-  SDL/SDL3/ymfm_wrap.cpp
+  SDL/SDL2/ymfm_wrap.cpp
 )
 else()
 set(fmgen_sources
-  SDL/SDL2/ymfm_wrap.cpp
+  SDL/SDL3/ymfm_wrap.cpp
 )
 endif()
 list(APPEND fmgen_sources
@@ -188,7 +188,17 @@ set(SDL_sources
 )
 
 
-if(SDL3)
+if(SDL2)
+  list(APPEND SDL_sources
+  SDL/SDL2/winx68k.cpp
+  SDL/SDL2/windraw.c
+  SDL/SDL2/GameController.c
+  SDL/SDL2/dswin.c
+  )
+  list(APPEND SDL_INCLUDE_DIR
+  SDL/SDL2
+  )
+else()
   list(APPEND SDL_sources
   SDL/SDL3/winx68k.cpp
   SDL/SDL3/windraw.c
@@ -198,16 +208,6 @@ if(SDL3)
   )
   list(APPEND SDL_INCLUDE_DIR
   SDL/SDL3
-  )
-else()
-  list(APPEND SDL_sources
-  SDL/SDL2/winx68k.cpp
-  SDL/SDL2/windraw.c
-  SDL/SDL2/GameController.c
-  SDL/SDL2/dswin.c
-  )
-  list(APPEND SDL_INCLUDE_DIR
-  SDL/SDL2
   )
 endif()
 
@@ -276,10 +276,10 @@ include_directories(
 )
 
 # == add execute ==
-if(SDL3)
-  set(BIN_TARGET "px68k.sdl3")
-else()
+if(SDL2)
   set(BIN_TARGET "px68k.sdl2")
+else()
+  set(BIN_TARGET "px68k.sdl3")
 endif()
 
 if(UNIX AND NOT APPLE)
@@ -322,10 +322,10 @@ set(CPACK On)
 
 # == Set link options ==
   target_link_libraries(${BIN_TARGET} PRIVATE ${LINKLIBS}
-                        ${SDL2_LIBRARIES}
-                        ${SDL2_TTF_LIBRARIES}
                         ${SDL3_LIBRARIES}
                         ${SDL3_TTF_LIBRARIES}
+                        ${SDL2_LIBRARIES}
+                        ${SDL2_TTF_LIBRARIES}
   )
 
 # == Excute Packaging ==
