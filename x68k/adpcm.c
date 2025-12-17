@@ -8,7 +8,7 @@
 
 #include "common.h"
 #include "prop.h"
-#include "pia.h"
+#include "ppi.h"
 #include "adpcm.h"
 #include "dmac.h"
 

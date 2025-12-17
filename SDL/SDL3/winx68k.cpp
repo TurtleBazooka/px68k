@@ -38,7 +38,7 @@ extern "C" {
 #include "bg.h"
 #include "palette.h"
 #include "crtc.h"
-#include "pia.h"
+#include "ppi.h"
 #include "scc.h"
 #include "midi.h"
 #include "sram.h"
@@ -106,7 +106,7 @@ struct chdata {
 char window_title[100];
 
 uint8_t DispFrame = 0;
-uint16_t SoundSampleRate;
+uint32_t SoundSampleRate;
 
 uint32_t hTimerID = 0;
 uint32_t TimerICount = 0;
@@ -362,7 +362,7 @@ WinX68k_Reset(void)
 	IOC_Init();
 	SCC_Init();
 	Keyboard_Init();
-	PIA_Init();
+	PPI_Init();
 	//GamePad_Init();
 	RTC_Init();
 	TVRAM_Init();

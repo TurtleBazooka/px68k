@@ -246,7 +246,7 @@ uint8_t	TimerA_Reg[2];
 int32_t	TimerA, TimerA_count;
 int32_t	TimerB, TimerB_count;
 int32_t	TimerWait;
-int32_t	timer_step;
+int32_t	timer_step = 0;//初期値
 
 // ====割り込み発生====
 void Intr(bool f)
@@ -391,11 +391,16 @@ void WriteIO(uint32_t reg, uint8_t data)
 // OPM 4MHz駆動 Samplingrate 11025/22050/44100/48000
 void OPM_Init(int32_t clock, int32_t rate)
 {
-	timer_step = int32_t(1000000. * 65536 / (clock / 64));
+	if(timer_step == 0)//2重初期化禁止
+	{
+	 timer_step = int32_t(1000000. * 65536 / (clock / 64));
 
-	add_chips<ymfm::ym2151>(clock, CHIP_YM2151, "YM2151");
+	 add_chips<ymfm::ym2151>(clock, CHIP_YM2151, "YM2151");
+	 ymfm_ym2151_vol = 0;//volume
+	}
+
+	// freq. change.のみ
 	YM2151_output_step = 0x100000000ull / rate;
-	ymfm_ym2151_vol = 0;//volume
 
 	return;
 }
@@ -404,6 +409,13 @@ void OPM_Init(int32_t clock, int32_t rate)
 void OPM_Cleanup(void)
 {
 	return;
+}
+
+// === OPM YM2151 change freq. ===
+void OPM_SetRate(int32_t clock, int32_t rate)
+{
+	// freq. change.のみ
+	YM2151_output_step = 0x100000000ull / rate;
 }
 
 // === OPM YM2151 Reset ===

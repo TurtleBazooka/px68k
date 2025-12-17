@@ -18,7 +18,7 @@
 #include "midi.h"
 #include "ioc.h"
 #include "palette.h"
-#include "pia.h"
+#include "ppi.h"
 #include "rtc.h"
 #include "sasi.h"
 #include "scc.h"
@@ -65,7 +65,7 @@ uint8_t (*MemReadTable[])(uint32_t) = {
 	TVRAM_Read, TVRAM_Read, TVRAM_Read, TVRAM_Read, TVRAM_Read, TVRAM_Read, TVRAM_Read, TVRAM_Read,
 	TVRAM_Read, TVRAM_Read, TVRAM_Read, TVRAM_Read, TVRAM_Read, TVRAM_Read, TVRAM_Read, TVRAM_Read,
 	CRTC_Read, rm_e82, DMA_Read, rm_nop, MFP_Read, RTC_Read, rm_nop, SysPort_Read,
-	rm_opm, ADPCM_Read, FDC_Read, SASI_Read, SCC_Read, PIA_Read, IOC_Read, rm_nop,
+	rm_opm, ADPCM_Read, FDC_Read, SASI_Read, SCC_Read, PPI_Read, IOC_Read, rm_nop,
 	SCSI_Read, rm_buserr, rm_buserr, rm_buserr, rm_buserr, rm_buserr, rm_buserr, MIDI_Read,
 	BG_Read, BG_Read, BG_Read, BG_Read, BG_Read, BG_Read, BG_Read, BG_Read,
 #ifndef	NO_MERCURY
@@ -105,7 +105,7 @@ void (*MemWriteTable[])(uint32_t, uint8_t) = {
 	TVRAM_Write, TVRAM_Write, TVRAM_Write, TVRAM_Write, TVRAM_Write, TVRAM_Write, TVRAM_Write, TVRAM_Write,
 	TVRAM_Write, TVRAM_Write, TVRAM_Write, TVRAM_Write, TVRAM_Write, TVRAM_Write, TVRAM_Write, TVRAM_Write,
 	CRTC_Write, wm_e82, DMA_Write, wm_nop, MFP_Write, RTC_Write, PRN_Write, SysPort_Write,
-	wm_opm, ADPCM_Write, FDC_Write, SASI_Write, SCC_Write, PIA_Write, IOC_Write, wm_buserr,
+	wm_opm, ADPCM_Write, FDC_Write, SASI_Write, SCC_Write, PPI_Write, IOC_Write, wm_buserr,
 	SCSI_Write, wm_buserr, wm_buserr, wm_buserr, wm_buserr, wm_buserr, wm_buserr, MIDI_Write,
 	BG_Write, BG_Write, BG_Write, BG_Write, BG_Write, BG_Write, BG_Write, BG_Write,
 #ifndef	NO_MERCURY

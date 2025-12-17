@@ -132,7 +132,7 @@ set(x68k_sources
   x68k/dmac.c
   x68k/crtc.c
   x68k/rtc.c
-  x68k/pia.c
+  x68k/ppi.c
   x68k/mfp.c
   x68k/palette.c
   x68k/bg.c

@@ -58,7 +58,7 @@
 #include "bg.h"
 #include "palette.h"
 #include "crtc.h"
-#include "pia.h"
+#include "ppi.h"
 #include "scc.h"
 #include "midi.h"
 #include "adpcm.h"
@@ -70,6 +70,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
+// 外部参照用
 extern	uint8_t		fdctrace;
 extern	uint8_t		traceflag;
 
