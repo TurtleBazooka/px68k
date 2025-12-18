@@ -15,7 +15,7 @@ extern "C" {
 #include "keyboard.h"
 #include "prop.h"
 #include "status.h"
-#include "GameController.h"
+#include "GamePad.h"
 #include "mkcgrom.h"
 #include "winx68k.h"
 #include "windraw.h"

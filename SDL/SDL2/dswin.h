@@ -3,6 +3,9 @@
 
 #include "common.h"
 
+extern int32_t audio_fd;
+
+void DSound_RateChange(uint32_t rate);
 int32_t DSound_Init(uint32_t rate, uint32_t length);
 int32_t DSound_Cleanup(void);
 

@@ -227,7 +227,7 @@ endif
 SDLOBJS= SDL/mouse.o SDL/status.o SDL/timer.o SDL/common.o SDL/prop.o SDL/winui.o SDL/keyboard.o
 
 ifdef SDL2
-SDLOBJS += SDL/SDL2/windraw.o SDL/SDL2/GameController.o SDL/SDL2/dswin.o
+SDLOBJS += SDL/SDL2/windraw.o SDL/SDL2/GamePad.o SDL/SDL2/dswin.o
 SDLCXXOBJS += SDL/SDL2/winx68k.o
 EXTRA_INCLUDES += -I./SDL/SDL2
 else

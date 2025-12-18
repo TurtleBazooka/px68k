@@ -30,12 +30,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 
-#ifndef SDL2
 #include "GamePad.h"
-#else
-#include "GameController.h"
-#endif
-
 #include "common.h"
 #include "keyboard.h"
 #include "windraw.h"

@@ -23,14 +23,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SDL2
-#include "SDL3/SDL.h"
-#include "GamePad.h"
-#else
+#ifdef SDL2
 #include "SDL2/SDL.h"
-#include "GameController.h"
+#else
+#include "SDL3/SDL.h"
 #endif
 
+#include "GamePad.h"
 #include "keymap.h"
 #include "common.h"
 #include "prop.h"

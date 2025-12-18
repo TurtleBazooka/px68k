@@ -192,7 +192,7 @@ if(SDL2)
   list(APPEND SDL_sources
   SDL/SDL2/winx68k.cpp
   SDL/SDL2/windraw.c
-  SDL/SDL2/GameController.c
+  SDL/SDL2/GamePad.c
   SDL/SDL2/dswin.c
   )
   list(APPEND SDL_INCLUDE_DIR

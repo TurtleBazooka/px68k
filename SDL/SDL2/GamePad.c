@@ -28,7 +28,7 @@ CyberStick(Analog)
 
 #include "common.h"
 #include "prop.h"
-#include "GameController.h"
+#include "GamePad.h"
 #include "winui.h"
 #include "keyboard.h"
 #include "dosio.h"

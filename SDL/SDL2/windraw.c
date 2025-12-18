@@ -41,7 +41,7 @@
 #include "prop.h"
 #include "status.h"
 #include "tvram.h"
-#include "GameController.h"
+#include "GamePad.h"
 #include "keyboard.h"
 #include "x68kmemory.h"
 #include "mfp.h"
