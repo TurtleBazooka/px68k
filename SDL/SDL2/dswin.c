@@ -109,6 +109,9 @@ DSound_Init(uint32_t rate, uint32_t buflen)
 	audio_fd = 1; //flag
 	playing = TRUE;
 
+	pbrp=pbsp;
+	pbwp=pbsp;
+
 	return TRUE;
 }
 

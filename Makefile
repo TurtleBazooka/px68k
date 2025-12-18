@@ -28,6 +28,7 @@ CDEBUGFLAGS += -DYMFM
 endif
 
 SDL_INCLUDE=""
+SDL_TTF_INC=""
 
 # SDL3/2 framework (for macOS)
 ifeq "$(PLATFORM)" "Darwin"
@@ -38,8 +39,12 @@ filechk = $(shell ls /Library/Frameworks | grep ${filename})
 ifeq (${filechk}, ${filename})
 SDL_INCLUDE= -F/Library/Frameworks -D_THREAD_SAFE
 SDL_LIB= -F/Library/Frameworks -framework SDL2
-# SDL_TTF_INC = -I/Library/Frameworks/SDL2_ttf.framework/Headers
-# SDL_TTF_LIB = -F/Library/Frameworks -framework SDL2_ttf
+filename = SDL2_ttf.framework
+filechk = $(shell ls /Library/Frameworks | grep ${filename})
+ifeq (${filechk}, ${filename})
+SDL_TTF_INC = -I/Library/Frameworks/SDL2_ttf.framework/Headers
+SDL_TTF_LIB = -F/Library/Frameworks -framework SDL2_ttf
+endif
 endif
 else
 PROGRAM = px68k.sdl3
@@ -48,8 +53,12 @@ filechk = $(shell ls /Library/Frameworks | grep ${filename})
 ifeq (${filechk}, ${filename})
 SDL_INCLUDE= -F/Library/Frameworks -D_THREAD_SAFE
 SDL_LIB= -F/Library/Frameworks -framework SDL3
-# SDL_TTF_INC = -I/Library/Frameworks/SDL3_ttf.framework/Headers
-# SDL_TTF_LIB = -F/Library/Frameworks -framework SDL3_ttf
+filename = SDL3_ttf.framework
+filechk = $(shell ls /Library/Frameworks | grep ${filename})
+ifeq (${filechk}, ${filename})
+SDL_TTF_INC = -I/Library/Frameworks/SDL3_ttf.framework/Headers
+SDL_TTF_LIB = -F/Library/Frameworks -framework SDL3_ttf
+endif
 endif
 endif
 endif

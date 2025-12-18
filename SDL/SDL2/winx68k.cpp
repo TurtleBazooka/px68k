@@ -682,7 +682,6 @@ drop_file(char* dropped_fileurl)
   return;
 }
 
-
 //
 // main
 //
@@ -810,20 +809,6 @@ int main(int argc, char *argv[])
 
 	if(err_msg_no != 0) WinDraw_Message(err_msg_no);
 
-	if ( SoundSampleRate ) {
-		ADPCM_Init(SoundSampleRate);
-		OPM_Init(4000000/*3579545*/, SoundSampleRate);
-#ifndef	NO_MERCURY
-		Mcry_Init(SoundSampleRate, winx68k_dir);
-#endif
-	} else {
-		ADPCM_Init(100);
-		OPM_Init(4000000/*3579545*/, 100);
-#ifndef	NO_MERCURY
-		Mcry_Init(100, winx68k_dir);
-#endif
-	}
-
 	FDD_Init();
 	SysPort_Init();
 	Mouse_Init();
@@ -835,17 +820,36 @@ int main(int argc, char *argv[])
 	MIDI_SetMimpiMap((char *)Config.ToneMapFile);	// 音色設定ファイル使用反映
 	MIDI_EnableMimpiDef(Config.ToneMap);
 
-	if (sdlaudio == 0 && !DSound_Init(Config.SampleRate, Config.BufferSize)) {
+	//Dummy SampleRate 
+	if(Config.SampleRate==0) SoundSampleRate = 11025;
+	else SoundSampleRate = Config.SampleRate;
+
+	// SDL Create Sound stream 
+	if (sdlaudio == 0 && !DSound_Init(SoundSampleRate, Config.BufferSize)) {
 		if (Config.DSAlert)
 			fprintf(stderr, "Can't init sound.\n");
 	}
 
+	//波形生成初期化(ADPCM,OPM,Mercury)
+	ADPCM_Init(SoundSampleRate);
+	OPM_Init(4000000/*3579545*/, SoundSampleRate);
+#ifndef	NO_MERCURY
+	Mcry_Init(SoundSampleRate, winx68k_dir);
+#endif
+
+	// Set Sound Volume
 	ADPCM_SetVolume((uint8_t)Config.PCM_VOL);
 	OPM_SetVolume((uint8_t)Config.OPM_VOL);
 #ifndef	NO_MERCURY
 	Mcry_SetVolume((uint8_t)Config.MCR_VOL);
 #endif
-	DSound_Play();
+
+	// No Sound set
+	if(Config.SampleRate == 0){
+		audio_fd = -1;
+	}
+
+	DSound_Play();// Start Sound
 
 	// command lineから実行 引数あり
 	if(argc > 1){
@@ -1068,6 +1072,20 @@ int main(int argc, char *argv[])
 						menu_mode = menu_enter;
 						DSound_Stop();
 					} else {
+						if(SoundSampleRate != Config.SampleRate){//SoundRate Change?
+						  SoundSampleRate = Config.SampleRate;
+						  if(SoundSampleRate==0){ audio_fd = -1;}
+						  else{
+						   ADPCM_Init(SoundSampleRate);
+						   OPM_SetRate(4000000, SoundSampleRate);
+#ifndef	NO_MERCURY
+						   Mcry_Init(SoundSampleRate, winx68k_dir);
+#endif
+						   //SDL Sound stream freq. change
+						   DSound_Cleanup();
+						   DSound_Init(SoundSampleRate,0);
+						  }
+						}
 						DSound_Play();
 						menu_mode = menu_out;
 						ScreenClearFlg = 1;

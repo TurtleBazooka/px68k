@@ -35,6 +35,34 @@ SDL_AudioStream *stream32;
 static void sdlaudio_callback16(void *userdata, SDL_AudioStream *stream16, int len , int total);
 static void sdlaudio_callback32(void *userdata, SDL_AudioStream *stream32, int len , int total);
 
+//=== SDL3 Sound freq. Change ===
+void
+DSound_RateChange(uint32_t rate)
+{
+SDL_AudioSpec fmt32; //32bit spec
+SDL_AudioSpec fmt16; //16bit spec
+SDL_AudioSpec fmtPC; //PC    spec
+
+  if (playing==FALSE){ return; }//初期化済？
+
+  // Flush stream
+  SDL_FlushAudioStream(stream16);
+  SDL_FlushAudioStream(stream32);
+
+  //32bit Stream1 Rate change
+  if(TRUE == SDL_GetAudioStreamFormat(stream32, &fmt32, &fmtPC)){
+   fmt32.freq = rate;
+   SDL_SetAudioStreamFormat(stream32, &fmt32, &fmtPC);
+  }
+
+  //16bit Stream2 Rate change
+  if(TRUE == SDL_GetAudioStreamFormat(stream16, &fmt16, &fmtPC)){
+   fmt16.freq = rate;
+   SDL_SetAudioStreamFormat(stream16, &fmt16, &fmtPC);
+  }
+
+  return;
+}
 
 //=== SDL3 Stream 生成 ===
 int32_t
@@ -153,6 +181,8 @@ DSound_Resume(void)
 static void
 sdlaudio_callback16(void *userdata, SDL_AudioStream *stream16, int len , int total)
 {
+	if (playing == FALSE) return;
+
 	int16_t pcmbuffer[len + 2];
 
 	//波形生成
@@ -175,6 +205,8 @@ sdlaudio_callback16(void *userdata, SDL_AudioStream *stream16, int len , int tot
 static void
 sdlaudio_callback32(void *userdata, SDL_AudioStream *stream32, int len , int total)
 {
+	if (playing == FALSE) return;
+
 #ifdef YMFM
 	int32_t pcmbuffer[len + 2];
 

@@ -680,7 +680,6 @@ drop_file(const char* dropped_fileurl)
   return;
 }
 
-
 //
 // main
 //
@@ -730,7 +729,7 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 	} else {
-		sdlaudio = 0;
+		sdlaudio = 0;//SDL init OK
 	}
 #endif
 
@@ -786,7 +785,6 @@ int main(int argc, char *argv[])
 	}
 
 	SplashFlag = 20;
-	SoundSampleRate = Config.SampleRate;
 
 	StatBar_Show(Config.WindowFDDStat);
 	WinGetRootSize();
@@ -822,20 +820,6 @@ int main(int argc, char *argv[])
 
 	if(err_msg_no != 0) WinDraw_Message(err_msg_no);
 
-	if ( SoundSampleRate ) {
-		ADPCM_Init(SoundSampleRate);
-		OPM_Init(4000000/*3579545*/, SoundSampleRate);
-#ifndef	NO_MERCURY
-		Mcry_Init(SoundSampleRate, winx68k_dir);
-#endif
-	} else {
-		ADPCM_Init(100);
-		OPM_Init(4000000/*3579545*/, 100);
-#ifndef	NO_MERCURY
-		Mcry_Init(100, winx68k_dir);
-#endif
-	}
-
 	FDD_Init();
 	SysPort_Init();
 	Mouse_Init();
@@ -843,21 +827,40 @@ int main(int argc, char *argv[])
 	GamePad_Init();
 	Timer_Init();
 
-	//MIDI_Init();
+	// MIDI_Init();
 	MIDI_SetMimpiMap((char *)Config.ToneMapFile);	// 音色設定ファイル使用反映
 	MIDI_EnableMimpiDef(Config.ToneMap);
 
-	if (sdlaudio == 0 && !DSound_Init(Config.SampleRate)) {
+	//Dummy SampleRate 
+	if(Config.SampleRate == 0) SoundSampleRate = 11025;
+	else SoundSampleRate = Config.SampleRate;
+
+	// SDL Create Sound stream 
+	if (sdlaudio == 0 && !DSound_Init(SoundSampleRate)) {
 		if (Config.DSAlert)
-			fprintf(stderr, "Can't init sound.\n");
+		fprintf(stderr, "Can't init sound.\n");
 	}
 
+	//波形生成初期化(ADPCM,OPM,Mercury)
+	ADPCM_Init(SoundSampleRate);
+	OPM_Init(4000000/*3579545*/, SoundSampleRate);
+#ifndef	NO_MERCURY
+	Mcry_Init(SoundSampleRate, winx68k_dir);
+#endif
+
+	// Set Sound Volume
 	ADPCM_SetVolume((uint8_t)Config.PCM_VOL);
 	OPM_SetVolume((uint8_t)Config.OPM_VOL);
 #ifndef	NO_MERCURY
 	Mcry_SetVolume((uint8_t)Config.MCR_VOL);
 #endif
-	DSound_Resume();
+
+	// No Sound set
+	if(Config.SampleRate == 0){
+		playing = FALSE;
+	}
+
+	DSound_Resume();// Start Sound
 
 	// command lineから実行 引数あり
 	if(argc > 1){
@@ -1081,10 +1084,24 @@ int main(int argc, char *argv[])
 						ev.key.key = SDLK_F12;
 				}
 				if (ev.key.key == SDLK_F12) {
-					if (menu_mode == menu_out) {
+					if (menu_mode == menu_out) {// Enter MenuMode
 						menu_mode = menu_enter;
 						DSound_Pause();
-					} else {
+					} else {// Return from MenuMode
+						if (Config.SampleRate != SoundSampleRate){
+						  SoundSampleRate = Config.SampleRate;
+						  if(SoundSampleRate==0){ playing = FALSE;}
+						  else{
+						   playing = TRUE;
+						   ADPCM_Init(SoundSampleRate);
+						   OPM_SetRate(4000000, SoundSampleRate);
+#ifndef	NO_MERCURY
+						   Mcry_Init(SoundSampleRate, winx68k_dir);
+#endif
+						   //SDL Sound stream freq. change
+						   DSound_RateChange(SoundSampleRate);
+						  }
+						}
 						DSound_Resume();
 						menu_mode = menu_out;
 						ScreenClearFlg = 1;

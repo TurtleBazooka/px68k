@@ -3,6 +3,7 @@
 
 void OPM_Init(int32_t clock, int32_t rate);
 void OPM_Cleanup(void);
+void OPM_SetRate(int32_t clock, int32_t rate);
 void OPM_Reset(void);
 void OPM_Update(int16_t *buffer, int32_t length, int16_t *pbsp, int16_t *pbep);
 void FASTCALL OPM_Write(uint32_t r, uint8_t v);
@@ -12,7 +13,6 @@ void OPM_SetVolume(uint8_t vol);
 
 void M288_Init(int32_t clock, int32_t rate, const char* path);
 void M288_Cleanup(void);
-void OPM_SetRate(int32_t clock, int32_t rate);
 void M288_Reset(void);
 void M288_Update(int16_t *buffer, int32_t length);
 void FASTCALL M288_Write(uint8_t r, uint8_t v);

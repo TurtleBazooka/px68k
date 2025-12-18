@@ -39,8 +39,8 @@ void TVRAM_Init(void)
 {
 	uint32_t i, j;
 	uint32_t bit;
-	memset(TVRAM,  0, 0x80000);
-	memset(TextDrawWork, 0, 1024*1024);
+	memset(TVRAM,  0, sizeof(TVRAM));
+	memset(TextDrawWork, 0, sizeof(TextDrawWork));
 	TVRAM_SetAllDirty();
 
 	memset(TextDrawPattern, 0, 2048*4);		// パターンテーブル初期化
