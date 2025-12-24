@@ -97,7 +97,6 @@ int32_t		VLINE_TOTAL = 567;
 int32_t		VLINE = 0;
 int32_t		vline = 0;
 
-extern	int32_t	SplashFlag;
 struct chdata {
     uint8_t *addr;
     uint32_t num;
@@ -784,8 +783,6 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	SplashFlag = 20;
-
 	StatBar_Show(Config.WindowFDDStat);
 	WinGetRootSize();
 	WinDraw_ChangeSize();
@@ -891,11 +888,6 @@ int main(int argc, char *argv[])
 				}
 			}
 #endif
-			if (SplashFlag) {
-				SplashFlag--;
-				if (SplashFlag == 0)
-					WinDraw_HideSplash();
-			}
 
 			Pal_TrackContrast();//コントラスト調整
 

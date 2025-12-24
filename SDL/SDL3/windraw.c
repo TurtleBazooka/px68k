@@ -60,7 +60,6 @@ int32_t  winx = 0, winy = 0; /*window position*/
 uint32_t winh = 0, winw = 0; /*window width hight*/
 uint32_t root_width, root_height; /*primary screen size*/
 uint32_t FrameCount = 0;
-int32_t  SplashFlag = 0;
 int32_t  ScreenClearFlg = 0;
 
 uint32_t WinDraw_Pal32B, WinDraw_Pal32R, WinDraw_Pal32G;
@@ -298,14 +297,6 @@ void WinDraw_ChangeMode(int32_t flg)
 	ScreenClearFlg=1;
 
  return ;
-}
-
-void WinDraw_ShowSplash(void)
-{
-}
-
-void WinDraw_HideSplash(void)
-{
 }
 
 static void draw_kbd_to_tex(void);
@@ -722,8 +713,6 @@ WinDraw_Draw(void)
 		return;
 	Draw_DrawFlag = 0;
 
-	if (SplashFlag)
-		WinDraw_ShowSplash();
 }
 
 // 32bit depth Copy

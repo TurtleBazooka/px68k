@@ -81,7 +81,7 @@ endif
 endif
 
 ifeq "$(PLATFORM)" "Darwin"
-# none.
+SDL_LIB +=  -Wl,-rpath,/Library/Frameworks/
 else
 ifeq "$(PLATFORM)" "Linux"
 SDL_LIB +=  -lrt
