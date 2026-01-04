@@ -6,9 +6,8 @@
 #include "ppi.h"
 #include "adpcm.h"
 #include "m68000.h"
+#include "GamePad.h"
 
-extern uint8_t FASTCALL Joystick_Read(uint8_t);
-extern void FASTCALL Joystick_Write(uint8_t,uint8_t);
 
 typedef struct {
 	uint8_t PortA;
@@ -50,8 +49,8 @@ void FASTCALL PPI_Write(uint32_t adr, uint8_t data)
 		portc = ppi.PortC;//保存
 		ppi.PortC = data;
 		if ( (portc&0x0f)!=(ppi.PortC&0x0f) ) ADPCM_SetPan(ppi.PortC&0x0f);
-		if ( (portc&0x10)!=(ppi.PortC&0x10) ) Joystick_Write(0, (uint8_t)((data&0x10)?0xff:0x00));
-		if ( (portc&0x20)!=(ppi.PortC&0x20) ) Joystick_Write(1, (uint8_t)((data&0x20)?0xff:0x00));
+		if ( (portc&0x10)!=(ppi.PortC&0x10) ) GamePad_Write(0, (uint8_t)((data&0x10)?0xff:0x00));
+		if ( (portc&0x20)!=(ppi.PortC&0x20) ) GamePad_Write(1, (uint8_t)((data&0x20)?0xff:0x00));
 		break;
 	case 0x07://Control
 		if ( !(data&0x80) ) {
@@ -63,8 +62,8 @@ void FASTCALL PPI_Write(uint32_t adr, uint8_t data)
 			else
 				ppi.PortC &= ~mask;
 			if ( (portc&0x0f)!=(ppi.PortC&0x0f) ) ADPCM_SetPan(ppi.PortC&0x0f);
-			if ( (portc&0x10)!=(ppi.PortC&0x10) ) Joystick_Write(0, (uint8_t)((data&1)?0xff:0x00));
-			if ( (portc&0x20)!=(ppi.PortC&0x20) ) Joystick_Write(1, (uint8_t)((data&1)?0xff:0x00));
+			if ( (portc&0x10)!=(ppi.PortC&0x10) ) GamePad_Write(0, (uint8_t)((data&1)?0xff:0x00));
+			if ( (portc&0x20)!=(ppi.PortC&0x20) ) GamePad_Write(1, (uint8_t)((data&1)?0xff:0x00));
 		}
 		else{
 			ppi.Ctrl = data;
@@ -87,11 +86,11 @@ uint8_t FASTCALL PPI_Read(uint32_t adr)
 	/*0xe9a000 ~ 0xe9bfff*/
 	switch(adr & 0x07){
 	case 0x01://PortA
-		if(ppi.Ctrl & 0x10) ret = Joystick_Read(0);
+		if(ppi.Ctrl & 0x10) ret = GamePad_Read(0);
 		else ret = ppi.PortA;
 		break;
 	case 0x03://PortB
-		if(ppi.Ctrl & 0x02) ret = Joystick_Read(1);
+		if(ppi.Ctrl & 0x02) ret = GamePad_Read(1);
 		else ret = ppi.PortB;
 		break;
 	case 0x05://PortC

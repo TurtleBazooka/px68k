@@ -36,8 +36,8 @@ typedef struct _vbtn_points {
 
 #define need_Vpad() (is_menu || Keyboard_IsSwKeyboard() || (!Config.JoyOrMouse && !sdl_joy))
 
-uint8_t FASTCALL Joystick_Read(uint8_t num);
-void FASTCALL Joystick_Write(uint8_t num, uint8_t data);
+uint8_t FASTCALL GamePad_Read(uint8_t num);
+void FASTCALL GamePad_Write(uint8_t num, uint8_t data);
 
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 typedef signed int SDL_Keycode;

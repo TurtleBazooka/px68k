@@ -81,7 +81,7 @@ endif
 endif
 
 ifeq "$(PLATFORM)" "Darwin"
-SDL_LIB +=  -Wl,-rpath,/Library/Frameworks/
+SDL_LIB += -Wl,-rpath,/Library/Frameworks/
 else
 ifeq "$(PLATFORM)" "Linux"
 SDL_LIB +=  -lrt
@@ -336,6 +336,7 @@ mac:: $(OBJDIRS) $(PROGRAM) icon
 	-rm -rf "$(PROGRAM).app/"
 	mkdir -p "$(PROGRAM).app/Contents/MacOS"
 	mkdir -p "$(PROGRAM).app/Contents/Resources/ja.lproj"
+	echo "APPL????" > "$(PROGRAM).app/Contents/PkgInfo"
 	cp -r "macOS/AppIcon.icns" "$(PROGRAM).app/Contents/Resources/AppIcon.icns"
 	cp -r "macOS/Info.plist.make" "$(PROGRAM).app/Contents/Info.plist"
 	cp $(PROGRAM) "$(PROGRAM).app/Contents/MacOS/px68k"

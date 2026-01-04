@@ -335,7 +335,7 @@ void GameController_Remapped(SDL_JoystickID padid)
 }
 
 // Read from X68000
-uint8_t FASTCALL Joystick_Read(uint8_t num)
+uint8_t FASTCALL GamePad_Read(uint8_t num)
 {
 	uint8_t joynum = num;
 	uint8_t ret0 = 0xff, ret1 = 0xff, ret;
@@ -426,7 +426,7 @@ uint8_t FASTCALL Joystick_Read(uint8_t num)
 }
 
 // Write from X68000
-void FASTCALL Joystick_Write(uint8_t num, uint8_t data)
+void FASTCALL GamePad_Write(uint8_t num, uint8_t data)
 {
 	if(num == 0){// PortA
 		if((JoyPortData[num]==0xff)&&(data == 0x00)){// PortA PC4 H→L
