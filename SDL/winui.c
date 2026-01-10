@@ -101,7 +101,7 @@ struct menu_flist mfl;
 /***** menu items *****/
 
 #define MENU_NUM 17
-#define MENU_WINDOW 7
+#define MENU_WINDOW 12
 
 int32_t mval_y[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 1, 1}; /*初期値*/
 
@@ -808,9 +808,9 @@ int32_t WinUI_Menu(int32_t first)
 			}
 			break;
 		case ms_file:
-			if (mfl.y == 13) {
-				if (mfl.ptr + 14 < mfl.num
-				    && mfl.ptr < MFL_MAX - 13) {
+			if (mfl.y == 14) {
+				if (mfl.ptr + 15 < mfl.num
+				    && mfl.ptr < MFL_MAX - 14) {
 					mfl.ptr++;
 				}
 			} else if (mfl.y + 1 < mfl.num) {

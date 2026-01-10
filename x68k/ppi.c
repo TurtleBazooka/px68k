@@ -8,7 +8,6 @@
 #include "m68000.h"
 #include "GamePad.h"
 
-
 typedef struct {
 	uint8_t PortA;
 	uint8_t PortB;

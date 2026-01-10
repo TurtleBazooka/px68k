@@ -68,17 +68,9 @@ or
 ## Build (need cmake)
 
 ```sh
-[for macOS]
-$ cmake -G Xcode -S . -B build -D YMFM=ON
-$ cmake --build build --config Release
-
-[for Linux]
+[for macOS/Linux/MinGW]
 $ cmake -S . -B build -D YMFM=ON
 $ cmake --build build --config Release
-
-[for Win(MinGW)]
- $ cmake -S . -B build -D YMFM=ON
- $ cmake --build build --config Release
  
 [on SDL2 and use fmgen for YM2151]
 $ cmake -S . -B build -D SDL2=ON

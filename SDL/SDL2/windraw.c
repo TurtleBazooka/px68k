@@ -1468,6 +1468,12 @@ struct _px68k_menu {
 	int32_t mfs; // menu font size;
 } p6m;
 
+//menuデザイン定義(行数)
+#define p6m_colum_h 1//menu上段行数
+#define p6m_colum_m 12//menu中段行数
+#define p6m_colum_l 2//menu下段行数
+#define p6m_colum_f 15//File選択menu行数
+
 // 画面タイプを変更する
 enum ScrType {x68k, pc98};
 int32_t scr_type = x68k;
@@ -1817,9 +1823,11 @@ void WinDraw_DrawMenu(int32_t menu_state, int32_t mkey_pos, int32_t mkey_y, int3
 		set_mcolor(0x00ffff00); // cyan
 		set_mlocateC(0, 0);
 		draw_str(twaku_str,1);
-		set_mlocateC(0, 1);
-		draw_str(twaku2_str,1);
-		set_mlocateC(0, 2);
+		for (i = 0; i < p6m_colum_h; i++) {
+		 set_mlocateC(0, 1 + i);
+		 draw_str(twaku2_str,1);
+		}
+		set_mlocateC(0, 1 + p6m_colum_h);
 		draw_str(twaku3_str,1);
 
 		set_mcolor(0xffffff00);
@@ -1850,17 +1858,17 @@ void WinDraw_DrawMenu(int32_t menu_state, int32_t mkey_pos, int32_t mkey_y, int3
 		set_mcolor(0xffff0000); // yellow
 		set_mlocateC(1, 4);
 		draw_str(waku_str,1);
-		for (i = 5; i < 12; i++) {
-			set_mlocateC(1, i);
+		for (i = 0; i < p6m_colum_m; i++) {
+			set_mlocateC(1, 5 + i);
 			draw_str(waku2_str,1);
 		}
-		set_mlocateC(1, 12);
+		set_mlocateC(1, 5 + p6m_colum_m);
 		draw_str(waku3_str,1);
 	}
 
 	// アイテム/キーワード
 	set_mcolor(0xffffff00);
-	for (i = 0; i < 7; i++) {
+	for (i = 0; i < p6m_colum_m; i++) {
 		set_mlocateC(3, 5 + i);
 		if (menu_state == ms_key && i == (mkey_y - mkey_pos)) {
 			set_mcolor(0x00000000);
@@ -1875,7 +1883,7 @@ void WinDraw_DrawMenu(int32_t menu_state, int32_t mkey_pos, int32_t mkey_y, int3
 	// アイテム/現在値
 	set_mcolor(0xffffff00);
 	set_mbcolor(0x00000000);
-	for (i = 0; i < 7; i++) {
+	for (i = 0; i < p6m_colum_m; i++) {
 		if ((menu_state == ms_value || menu_state == ms_hwjoy_set)
 		    && i == (mkey_y - mkey_pos)) {
 			set_mcolor(0x00000000);
@@ -1939,25 +1947,25 @@ void WinDraw_DrawMenu(int32_t menu_state, int32_t mkey_pos, int32_t mkey_y, int3
 		// 下枠
 		set_mcolor(0x00ffff00); // cyan
 		set_mbcolor(0x00000000);
-		set_mlocateC(0, 13);
+		set_mlocateC(0, 18);
 		draw_str(swaku_str,1);
-		set_mlocateC(0, 14);
-		draw_str(swaku2_str,1);
-		set_mlocateC(0, 15);
-		draw_str(swaku2_str,1);
-		set_mlocateC(0, 16);
+		for (i = 0; i < p6m_colum_l; i++) {
+		 set_mlocateC(0, 19 + i);
+		 draw_str(swaku2_str,1);
+		}
+		set_mlocateC(0, 19 + p6m_colum_l);
 		draw_str(swaku3_str,1);
 	}
 
 	// キャプション
 	set_mcolor(0xffffff00);
 	set_mbcolor(0x00000000);
-	set_mlocateC(2, 14);
+	set_mlocateC(2, 19);
 	if(Config.MenuLanguage == 0){draw_str(item_cap_JPN[mkey_y],1);}
 	else						{draw_str(item_cap_US[mkey_y],1);}
 
 	if (menu_state == ms_value) {
-		set_mlocateC(2, 15);
+		set_mlocateC(2, 20);
 	  if(Config.MenuLanguage == 0){draw_str(item_cap2_JPN[mkey_y],1);}
 	  else						{draw_str(item_cap2_US[mkey_y],1);}
 	}
@@ -1982,14 +1990,14 @@ void WinDraw_DrawMenufile(struct menu_flist *mfl)
 	set_mbcolor(0x00000001); // 0x0だと透過モード
 	set_mlocateC(1, 1);
 	draw_str(swaku_str,1);
-	for (i = 2; i < 16; i++) {
-		set_mlocateC(1, i);
+	for (i = 0; i < p6m_colum_f; i++) {
+		set_mlocateC(1, 2 + i);
 		draw_str(swaku2_str,1);
 	}
-	set_mlocateC(1, 16);
+	set_mlocateC(1, 2 + p6m_colum_f);
 	draw_str(swaku3_str,1);
 
-	for (i = 0; i < 14; i++) {
+	for (i = 0; i < p6m_colum_f; i++) {
 		if (i + 1 > mfl->num) {
 			break;
 		}

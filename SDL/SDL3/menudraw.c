@@ -77,6 +77,12 @@ struct _px68k_menu {
 	int32_t mfs; // menu font size;
 } p6m;
 
+//menuデザイン定義(行数)
+#define p6m_colum_h 1//menu上段行数
+#define p6m_colum_m 12//menu中段行数
+#define p6m_colum_l 2//menu下段行数
+#define p6m_colum_f 15//File選択menu行数
+
 /* sjis→jisコード変換 */
 static uint16_t sjis2jis(uint16_t w)
 {
@@ -228,61 +234,47 @@ static uint32_t *get_ml_ptr()
 // ・表示した分cursorは先に移動する
 static void draw_char(uint16_t sjis)
 {
-	uint32_t f;
+	uint32_t fnt_ad;
 	uint32_t *p;
-	int32_t i, j, k, wc, w, result;
-	uint8_t c;
-	uint32_t bc,ch;
+	uint32_t c32;
+	int32_t i, k, w, h;
 
-	int32_t h = p6m.mfs;
+	// char High 
+	h = p6m.mfs;
 
-	/*sjis範囲チェック*/
-	ch=((sjis & 0xff00) >> 8);
-	if((sjis & 0x00ff)==0x0000){
-		if((ch<0x0020)||(ch>0x00df)){ return; }
-	}
-	else{
-	  /*2byteチェック*/
-	  if(((ch>=0x0081)&&(ch<=0x009f))||((ch>=0x00e0)&&(ch<=0x00ef))){
-		bc=(sjis & 0x00ff);
-		if((bc<0x0040)||(bc>0x00fc)){ return; }
-	  }
-	  else{
-		return;
-	  }
-	}
-
-	/*draw pointer*/
+	// get draw pointer
 	p = get_ml_ptr();
 
-	/*Font data address*/
-	result = get_font_addr(sjis, h, &f);
-	if ((result == FALSE) || (f > 0x0c0000)){
-		return;
-	}
+	// get Font ROM address
+	if(get_font_addr(sjis, h, &fnt_ad) == FALSE) return;
+	fnt_ad |= 0xf00000; // X68000 font area
 
 	// h=8は半角のみ
 	w = (h == 8)? 8 : (isHankaku(sjis >> 8)? h / 2 : h);
 
+	// Drawing char
 	for (i = 0; i < h; i++) {
-		wc = w;
-		for (j = 0; j < ((w % 8 == 0)? w / 8 : w / 8 + 1); j++) {
-			c = Memory_ReadB(f + 0xf00000);/*FONT-ROM*/
-			f++;
-			for (k = 0; k < 8 ; k++) {
-				bc = p6m.mbcolor? p6m.mbcolor : *p;
-				*p = (c & 0x80)? p6m.mcolor : bc;
-				p++;
-				c = c << 1;
-				wc--;
-				if (wc == 0)
-					break;
-			}
-		}
-		p = p + MENU_WIDTH - w;
+	 if(w/4 > 1){// 8x8 8x16 12x12 12x24 16x16 24x24
+	   c32  = Memory_ReadB(fnt_ad) << 24;
+	   fnt_ad++;
+	 }
+	 if(w/4 > 2){//          12x12 12x24 16x16 24x24
+	   c32 |= Memory_ReadB(fnt_ad) << 16;
+	   fnt_ad++;
+	 }
+	 if(w/4 > 5){//                            24x24
+	   c32 |= Memory_ReadB(fnt_ad) <<  8;
+	   fnt_ad++;
+	 }
+	 for (k = 0; k < w ; k++) {
+	  if(0x80000000 & c32)  *(p+k) = p6m.mcolor;
+	  else if(p6m.mbcolor) *(p+k) = p6m.mbcolor;
+	  c32 <<= 1;
+	 }
+	 p = p + MENU_WIDTH;
 	}
 
-	p6m.ml_x += w;
+	p6m.ml_x += w;// 次の描画位置
 }
 
 /*--- 文字列を画面表示(sjis,utf8対応) ---*/
@@ -421,9 +413,11 @@ void WinDraw_DrawMenu(int32_t menu_state, int32_t mkey_pos, int32_t mkey_y, int3
 		set_mcolor(0x00ffff00); // cyan
 		set_mlocateC(0, 0);
 		draw_str(twaku_str,1);
-		set_mlocateC(0, 1);
-		draw_str(twaku2_str,1);
-		set_mlocateC(0, 2);
+		for (i = 0; i < p6m_colum_h; i++) {
+		 set_mlocateC(0, 1 + i);
+		 draw_str(twaku2_str,1);
+		}
+		set_mlocateC(0, 1 + p6m_colum_h);
 		draw_str(twaku3_str,1);
 
 		set_mcolor(0xffffff00);
@@ -454,17 +448,17 @@ void WinDraw_DrawMenu(int32_t menu_state, int32_t mkey_pos, int32_t mkey_y, int3
 		set_mcolor(0xffff0000); // yellow
 		set_mlocateC(1, 4);
 		draw_str(waku_str,1);
-		for (i = 5; i < 12; i++) {
-			set_mlocateC(1, i);
+		for (i = 0; i < p6m_colum_m; i++) {
+			set_mlocateC(1, 5 + i);
 			draw_str(waku2_str,1);
 		}
-		set_mlocateC(1, 12);
+		set_mlocateC(1, 5 + p6m_colum_m);
 		draw_str(waku3_str,1);
 	}
 
 	// アイテム/キーワード
 	set_mcolor(0xffffff00);
-	for (i = 0; i < 7; i++) {
+	for (i = 0; i < p6m_colum_m; i++) {
 		set_mlocateC(3, 5 + i);
 		if (menu_state == ms_key && i == (mkey_y - mkey_pos)) {
 			set_mcolor(0x00000000);
@@ -479,7 +473,7 @@ void WinDraw_DrawMenu(int32_t menu_state, int32_t mkey_pos, int32_t mkey_y, int3
 	// アイテム/現在値
 	set_mcolor(0xffffff00);
 	set_mbcolor(0x00000000);
-	for (i = 0; i < 7; i++) {
+	for (i = 0; i < p6m_colum_m; i++) {
 		if ((menu_state == ms_value || menu_state == ms_hwjoy_set)
 		    && i == (mkey_y - mkey_pos)) {
 			set_mcolor(0x00000000);
@@ -543,25 +537,25 @@ void WinDraw_DrawMenu(int32_t menu_state, int32_t mkey_pos, int32_t mkey_y, int3
 		// 下枠
 		set_mcolor(0x00ffff00); // cyan
 		set_mbcolor(0x00000000);
-		set_mlocateC(0, 13);
+		set_mlocateC(0, 18);
 		draw_str(swaku_str,1);
-		set_mlocateC(0, 14);
-		draw_str(swaku2_str,1);
-		set_mlocateC(0, 15);
-		draw_str(swaku2_str,1);
-		set_mlocateC(0, 16);
+		for (i = 0; i < p6m_colum_l; i++) {
+		  set_mlocateC(0, 19 + i);
+		  draw_str(swaku2_str,1);
+		}
+		set_mlocateC(0, 19 + p6m_colum_l);
 		draw_str(swaku3_str,1);
 	}
 
 	// キャプション
 	set_mcolor(0xffffff00);
 	set_mbcolor(0x00000000);
-	set_mlocateC(2, 14);
+	set_mlocateC(2, 19);
 	if(Config.MenuLanguage == 0){draw_str(item_cap_JPN[mkey_y],1);}
 	else						{draw_str(item_cap_US[mkey_y],1);}
 
 	if (menu_state == ms_value) {
-		set_mlocateC(2, 15);
+		set_mlocateC(2, 20);
 	  if(Config.MenuLanguage == 0){draw_str(item_cap2_JPN[mkey_y],1);}
 	  else						{draw_str(item_cap2_US[mkey_y],1);}
 	}
@@ -586,14 +580,14 @@ void WinDraw_DrawMenufile(struct menu_flist *mfl)
 	set_mbcolor(0x00000001); // 0x0だと透過モード
 	set_mlocateC(1, 1);
 	draw_str(swaku_str,1);
-	for (i = 2; i < 16; i++) {
-		set_mlocateC(1, i);
+	for (i = 0; i < p6m_colum_f; i++) {
+		set_mlocateC(1, 2 + i);
 		draw_str(swaku2_str,1);
 	}
-	set_mlocateC(1, 16);
+	set_mlocateC(1, 2 + p6m_colum_f);
 	draw_str(swaku3_str,1);
 
-	for (i = 0; i < 14; i++) {
+	for (i = 0; i < p6m_colum_f; i++) {
 		if (i + 1 > mfl->num) {
 			break;
 		}

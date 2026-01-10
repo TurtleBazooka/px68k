@@ -897,7 +897,7 @@ int main(int argc, char *argv[])
 
 		/* menu clickable area */
 		uint32_t menu_mouse_area_xr =  30, menu_mouse_area_xl = 720;
-		uint32_t menu_mouse_area_yu = 110, menu_mouse_area_yd = 300;
+		uint32_t menu_mouse_area_yu = 110, menu_mouse_area_yd = 410;
 
 		while (SDL_PollEvent(&ev)) {
 			switch (ev.type) {
@@ -980,14 +980,14 @@ int main(int argc, char *argv[])
 			case SDL_EVENT_MOUSE_MOTION:
 				if(ev.window.windowID == SDL_GetWindowID(sdl_window)){//on main-window
 				if(menu_mode != menu_out){//menu mode
-					if((menu_state!=ms_file)&&(ev.button.x>25)&&(ev.button.x<190) &&(ev.button.y>121)&&(ev.button.y<289)){
-					uint32_t m_locate=(ev.button.y-121)/24;
+					if((menu_state!=ms_file)&&(ev.button.x>25)&&(ev.button.x<190) &&(ev.button.y>(5*24))&&(ev.button.y<((12+5)*24)) ){
+					uint32_t m_locate=(ev.button.y-(5*24))/24;
 					extern int32_t mkey_pos,mkey_y;
 					if( m_locate + mkey_pos > mkey_y) menu_key_down = 0x40000051; // Down Wheel
 					if( m_locate + mkey_pos < mkey_y) menu_key_down = 0x40000052; // Up   Wheel
 					}
-					if((menu_state==ms_file)&&(ev.button.x>25)&&(ev.button.x<700) &&(ev.button.y>50)&&(ev.button.y<385)){
-					uint32_t m_locate=(ev.button.y-50)/24;
+					if((menu_state==ms_file)&&(ev.button.x>25)&&(ev.button.x<700) &&(ev.button.y>(2*24))&&(ev.button.y<((15+2)*24)) ){
+					uint32_t m_locate=(ev.button.y-(2*24))/24;
 					if( m_locate > mfl.y) menu_key_down = 0x40000051; // Down menu
 					if( m_locate < mfl.y) menu_key_down = 0x40000052; // Up   menu
 					}
