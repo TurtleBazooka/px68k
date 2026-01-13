@@ -127,7 +127,7 @@ $ cmake --build build --config (RelWithDebInfo/Debug/MinSizeRel)
 ```sh
   $ dd if=/dev/zero of=TEST.HDS bs=1m count=200
 ```
- * Run px68k.sdl2 with FDD0:Human68k 3.02, HDD0:TEST.HDS
+ * Run px68k.sdl3 with FDD0:Human68k 3.02, HDD0:TEST.HDS
  * on human68k run `format` `SCSI装置` `0 ハードディスク 199Mバイト` `装置初期化` `Y`
  * `領域確保` `容量 199` `ボリューム名 hoge` `システム転送 する` `実行` `Y`
  * `終了` `Y`　return to human68k prompt.

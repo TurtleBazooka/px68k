@@ -27,9 +27,6 @@ ifdef YMFM
 CDEBUGFLAGS += -DYMFM
 endif
 
-SDL_INCLUDE=""
-SDL_TTF_INC=""
-
 # SDL3/2 framework (for macOS)
 ifeq "$(PLATFORM)" "Darwin"
 ifdef SDL2
@@ -64,7 +61,7 @@ endif
 endif
 
 # for SDL3/2 LINK (use pkg-config)
-ifeq (${SDL_INCLUDE}, "")
+ifndef SDL_INCLUDE
 ifdef SDL2
 SDL_INCLUDE = $(shell pkg-config sdl2 --cflags)
 SDL_LIB     = $(shell pkg-config sdl2 --libs)
