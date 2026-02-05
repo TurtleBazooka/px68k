@@ -95,10 +95,13 @@ endif
 include version.txt
 
 
-# CC	 = clang -std=c17 -arch x86_64 -arch arm64
-# CXX	 = clang++ -std=c++17 -arch x86_64 -arch arm64
+ifeq "$(PLATFORM)" "Darwin"
+CC	 = clang -std=c17 -arch x86_64 -arch arm64
+CXX	 = clang++ -std=c++17 -arch x86_64 -arch arm64
+else
 CC	 = gcc
 CXX	 = g++
+endif
 
 CXXLINK	 = $(CXX)
 RM	 = rm -rf
