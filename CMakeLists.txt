@@ -66,10 +66,12 @@ if(SDL2)
  add_definitions( -DSDL2 )
  find_package(SDL2 REQUIRED)
 # find_package(SDL2_ttf REQUIRED)
+# find_library(SDLTTF_LIB SDL2_ttf)
 else()
   message(" - define SDL3")
  find_package(SDL3 REQUIRED)
 # find_package(SDL3_ttf REQUIRED)
+# find_library(SDLTTF_LIB SDL3_ttf)
 endif()
 
 if(APPLE)
@@ -323,9 +325,8 @@ set(CPACK On)
 # == Set link options ==
   target_link_libraries(${BIN_TARGET} PRIVATE ${LINKLIBS}
                         ${SDL3_LIBRARIES}
-                        ${SDL3_TTF_LIBRARIES}
                         ${SDL2_LIBRARIES}
-                        ${SDL2_TTF_LIBRARIES}
+						${SDLTTF_LIB}
   )
 
 # == Excute Packaging ==

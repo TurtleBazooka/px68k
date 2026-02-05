@@ -26,12 +26,12 @@ by kameya 2022/11/02
 #include <stdlib.h>
 #include <math.h>
 
-#ifndef SDL2
+#ifdef SDL2
+#include <SDL2/SDL.h>
+#include <SDL2_ttf/SDL_ttf.h>
+#else
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
-#else
-#include <SDL2/SDL.h>
-#include <SDL_ttf.h>
 #endif
 
 #include "common.h"

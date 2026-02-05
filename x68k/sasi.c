@@ -1,55 +1,71 @@
-// ---------------------------------------------------------------------------------------
+// -----------------------------------------------------------
 //  SASI.C - Shugart Associates System Interface (SASI HDD)
-// ---------------------------------------------------------------------------------------
+//  0xE9001 R/W Data
+//  0xE9003 R:Status W:Data w SEL=H
+//  0xE9005 W:Reset
+//  0xE9007 W:Data w SEL=L
+// -----------------------------------------------------------
 
 #include "common.h"
 #include "dosio.h"
 #include "prop.h"
 #include "status.h"
-#include "../m68000/m68000.h"
 #include "ioc.h"
 #include "sasi.h"
 #include "irqh.h"
 
-uint8_t SASI_Buf[256];
-uint8_t SASI_Phase = 0;
-uint32_t SASI_Sector = 0;
-uint32_t SASI_Blocks = 0;
-uint8_t SASI_Cmd[6];
-uint8_t SASI_CmdPtr = 0;
-uint16_t SASI_Device = 0;
-uint8_t SASI_Unit = 0;
-uint16_t SASI_BufPtr = 0;
-uint8_t SASI_RW = 0;
-uint8_t SASI_Stat = 0;
-uint8_t SASI_Mes = 0;
-uint8_t SASI_Error = 0;
-uint8_t SASI_SenseStatBuf[4];
-uint8_t SASI_SenseStatPtr = 0;
 
+uint8_t SASI_Buf[256];
+int     SASI_BufPtr;
+
+uint8_t SASI_Cmd[6];
+int     SASI_CmdPtr;
+
+int      SASI_Phase;
+uint32_t SASI_Sector;
+uint32_t SASI_Blocks;
+uint16_t SASI_Device;
+uint8_t SASI_Unit;
+uint8_t SASI_RW;
+uint8_t SASI_Stat;
+uint8_t SASI_Error;
+
+uint8_t SASI_SenseStatBuf[4];
+int     SASI_SenseStatPtr;
+
+// -----------------------------------------------------------
+//   Busy or NOT
+// -----------------------------------------------------------
 int32_t SASI_IsReady(void)
 {
 	if ( (SASI_Phase==2)||(SASI_Phase==3)||(SASI_Phase==9) )
+	{
 		return 1;
+	}
+
 	return 0;
 }
 
 
-// -----------------------------------------------------------------------
+// -----------------------------------------------------------
 //   わりこみ
-// -----------------------------------------------------------------------
+// -----------------------------------------------------------
 int32_t FASTCALL SASI_Int(uint8_t irq)
 {
 	IRQH_IRQCallBack(irq);
+
 	if (irq==1)
+	{
 		return ((int32_t)IOC_IntVect + 2);
+	}
+
 	return -1;
 }
 
 
-// -----------------------------------------------------------------------
+// -----------------------------------------------------------
 //   初期化
-// -----------------------------------------------------------------------
+// -----------------------------------------------------------
 void SASI_Init(void)
 {
 	SASI_Phase = 0;
@@ -66,73 +82,88 @@ void SASI_Init(void)
 }
 
 
-// -----------------------------------------------------------------------
+// -----------------------------------------------------------
 //   しーく（リード時）
-// -----------------------------------------------------------------------
+// -----------------------------------------------------------
 int32_t SASI_Seek(void)
 {
 	FILEH fp;
-	memset(SASI_Buf, 0, 256);
+
+	memset(SASI_Buf, 0, sizeof(SASI_Buf));
 	fp = File_Open((char *)Config.HDImage[SASI_Device*2+SASI_Unit]);
 	if (!fp)
 	{
-		memset(SASI_Buf, 0, 256);
+		memset(SASI_Buf, 0, sizeof(SASI_Buf));
 		return -1;
 	}
+
 	if (File_Seek(fp, SASI_Sector<<8, FSEEK_SET)!=(SASI_Sector<<8)) 
 	{
 		File_Close(fp);
 		return 0;
 	}
+
 	if (File_Read(fp, SASI_Buf, 256)!=256)
 	{
 		File_Close(fp);
 		return 0;
 	}
+
 	File_Close(fp);
 
 	return 1;
 }
 
 
-// -----------------------------------------------------------------------
+// -----------------------------------------------------------
 //   しーく（ライト時）
-// -----------------------------------------------------------------------
+// -----------------------------------------------------------
 int32_t SASI_Flush(void)
-{	FILEH fp;
+{
+	FILEH fp;
 
 	fp = File_Open((char *)Config.HDImage[SASI_Device*2+SASI_Unit]);
 	if (!fp) return -1;
+
 	if (File_Seek(fp, SASI_Sector<<8, FSEEK_SET)!=(SASI_Sector<<8))
 	{
 		File_Close(fp);
 		return 0;
 	}
+
 	if (File_Write(fp, SASI_Buf, 256)!=256)
 	{
 		File_Close(fp);
 		return 0;
 	}
+
 	File_Close(fp);
 
 	return 1;
 }
 
 
-// -----------------------------------------------------------------------
+// -----------------------------------------------------------
 //   I/O Read
-// -----------------------------------------------------------------------
+// -----------------------------------------------------------
 uint8_t FASTCALL SASI_Read(uint32_t adr)
 {
-	uint8_t ret = 0xff;
+	uint8_t ret = 0;
 	int32_t result;
 
 	/*== 0xe9600x ~ 0xe97ffx==*/
 	switch(adr & 0x07)
 	{
 	case 0x01:
-		if ((SASI_Phase==3)&&(SASI_RW))	// データリード中
+		switch(SASI_Phase)
 		{
+		case 0://BusFree phase
+		case 1://Selection phase
+		case 2://Command phase
+		 break;
+		case 3://Data Tr. phase
+		 if (SASI_RW)	// データリード中
+		 {
 			ret = SASI_Buf[SASI_BufPtr++];
 			if (SASI_BufPtr==256)
 			{
@@ -149,40 +180,38 @@ uint8_t FASTCALL SASI_Read(uint32_t adr)
 					}
 				}
 				else
-					SASI_Phase++;		// 指定ブロックのリード完了
+					SASI_Phase++;	// 指定ブロックのリード完了
 			}
-		}
-		else if (SASI_Phase==4)				// Status Phase
-		{
+		 }
+		 break;
+		case 4://Status. phase
 			if (SASI_Error)
 				ret = 0x02;
 			else
 				ret = SASI_Stat;
 			SASI_Phase++;
-		}
-		else if (SASI_Phase==5)				// MessagePhase
-		{
-			ret = 0x00;
-			SASI_Phase = 0;				// 0を返すだけxA掘ＢusFreeに帰ります
-		}
-		else if (SASI_Phase==9)				// DataPhase(SenseStat専用)
-		{
+		 break;
+		case 5://Massage phase
+			SASI_Phase = 0;			// 0を返すだけxA掘ＢusFreeに帰ります
+		 break;
+		case 9://Data phase(for SenseStat)
 			ret = SASI_SenseStatBuf[SASI_SenseStatPtr++];
 			if (SASI_SenseStatPtr==4)
 			{
 				SASI_Error = 0;
-				SASI_Phase = 4;				// StatusPhaseへ
+				SASI_Phase = 4;		// StatusPhaseへ
 			}
+		 break;
+		default:
+		 break;
 		}
 		if (SASI_Phase==4)
 		{
-			ret = 0x00;
 			IOC_IntStat|=0x10;
 			if (IOC_IntStat&8) IRQH_Int(1, &SASI_Int);
 		}
 		break;
 	case 0x03:
-		ret = 0x00;// All clear
 		if (SASI_Phase)
 			ret |= 2;		// Busy
 		if (SASI_Phase>1)
@@ -198,10 +227,6 @@ uint8_t FASTCALL SASI_Read(uint32_t adr)
 		if (SASI_Phase==5)
 			ret |= 0x10;		// MSG
 		break;
-	case 0x05:
-	case 0x07:
-		ret = 0x00;
-		break;
 	default:
 		break;
 	}
@@ -212,10 +237,12 @@ uint8_t FASTCALL SASI_Read(uint32_t adr)
 }
 
 
+// -----------------------------------------------------------
 // コマンドのチェック。正直、InsideX68k内の記述ではちと足りない ^^;。
 // 未記述のものとして、
-//   - C2h（初期化系？）。Unit以外のパラメータは無し。DataPhaseで10個のデータを書きこむ。
-//   - 06h（フォーマット？）。論理ブロック指定あり（21hおきに指定している）。ブロック数のとこは6が指定されている。
+//   - C2h（初期化系？）Unit以外のパラメータは無し DataPhaseで10個のデータを書きこむ。
+//   - 06h（フォーマット？）論理ブロック指定あり（21hおきに指定している）ブロック数のとこは6が指定されている。
+// -----------------------------------------------------------
 void SASI_CheckCmd(void)
 {
 	int32_t result;
@@ -250,9 +277,9 @@ void SASI_CheckCmd(void)
 		SASI_SenseStatBuf[0] = SASI_Error;
 		SASI_SenseStatBuf[1] = (uint8_t)((SASI_Unit<<5)|((SASI_Sector>>16)&0x1f));
 		SASI_SenseStatBuf[2] = (uint8_t)(SASI_Sector>>8);
-		SASI_SenseStatBuf[3] = (uint8_t)SASI_Sector;
+		SASI_SenseStatBuf[3] = (uint8_t)(SASI_Sector & 0xff);
 		SASI_Error = 0;
-		SASI_Phase=9;
+		SASI_Phase = 9;
 		SASI_Stat = 0;
 		SASI_SenseStatPtr = 0;
 		break;
@@ -281,7 +308,7 @@ void SASI_CheckCmd(void)
 		SASI_RW = 0;
 		SASI_BufPtr = 0;
 		SASI_Stat = 0;
-		memset(SASI_Buf, 0, 256);
+		memset(SASI_Buf, 0, sizeof(SASI_Buf));
 		result = SASI_Seek();
 		if ( (result==0)||(result==-1) )
 		{
@@ -315,13 +342,14 @@ void SASI_CheckCmd(void)
 		break;
 	default:
 		SASI_Phase += 2;
+		break;
 	}
 }
 
 
-// -----------------------------------------------------------------------
+// -----------------------------------------------------------
 //   I/O Write
-// -----------------------------------------------------------------------
+// -----------------------------------------------------------
 void FASTCALL SASI_Write(uint32_t adr, uint8_t data)
 {
 	int32_t result;
@@ -380,17 +408,7 @@ void FASTCALL SASI_Write(uint32_t adr, uint8_t data)
 		if(SASI_Phase==1) SASI_Phase++;
 		break;
 	case 0x05://--SASI Reset
-		SASI_Phase = 0;
-		SASI_Sector = 0;
-		SASI_Blocks = 0;
-		SASI_CmdPtr = 0;
-		SASI_Device = 0;
-		SASI_Unit = 0;
-		SASI_BufPtr = 0;
-		SASI_RW = 0;
-		SASI_Stat = 0;
-		SASI_Error = 0;
-		SASI_SenseStatPtr = 0;
+		SASI_Init();
 		break;
 	case 0x07:
 		SASI_Device = 0x7f;
