@@ -158,8 +158,9 @@ int RTC_Timer(int32_t clock)
 	if ( !(RTC_Regs[0][15] & 0x08) ){// 出力enable
 		if ( RTC_Timer1>=10000000 ){
 		  MFP_Int(15);
+		  RTC_Timer1 -= 10000000;
 		}
-		if( RTC_Timer1>(10000000/2) )   alarm_out = 1;//Alarm端子 1Hz H/L
+		if( RTC_Timer1<(10000000/2) )   alarm_out = 1;//Alarm端子 1Hz H/L
 	}
 	if ( RTC_Timer1>=10000000 ) RTC_Timer1 -= 10000000;
 
@@ -167,8 +168,9 @@ int RTC_Timer(int32_t clock)
 	if ( !(RTC_Regs[0][15] & 0x04) ){// 出力enable
 		if ( RTC_Timer16>=625000 ) {
 		  MFP_Int(15);
+		  RTC_Timer16 -= 625000;
 		}
-		if( RTC_Timer1>(625000/2) )    alarm_out = 1;//Alarm端子 1Hz H/L
+		if( RTC_Timer16<(625000/2) )    alarm_out = 1;//Alarm端子 1Hz H/L
 	}
 	if ( RTC_Timer16>=625000 ) RTC_Timer16 -= 625000;
 
