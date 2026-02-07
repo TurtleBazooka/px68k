@@ -147,16 +147,30 @@ void FASTCALL RTC_Write(uint32_t adr, uint8_t data)
 }
 
 
-void RTC_Timer(int32_t clock)
+int RTC_Timer(int32_t clock)
 {
+	int alarm_out = 0;//Alarm端子の出力 1Hz & 16Hz
+
 	RTC_Timer1  += clock;
 	RTC_Timer16 += clock;
-	if ( RTC_Timer1>=10000000 ) {
-		if ( !(RTC_Regs[0][15]&8) ) MFP_Int(15);
-		RTC_Timer1 -= 10000000;
+
+	// 1Hz 割り込みと出力
+	if ( !(RTC_Regs[0][15] & 0x08) ){// 出力enable
+		if ( RTC_Timer1>=10000000 ){
+		  MFP_Int(15);
+		}
+		if( RTC_Timer1>(10000000/2) )   alarm_out = 1;//Alarm端子 1Hz H/L
 	}
-	if ( RTC_Timer16>=625000 ) {
-		if ( !(RTC_Regs[0][15]&4) ) MFP_Int(15);
-		RTC_Timer16 -= 625000;
+	if ( RTC_Timer1>=10000000 ) RTC_Timer1 -= 10000000;
+
+	// 16Hz 割り込みと出力
+	if ( !(RTC_Regs[0][15] & 0x04) ){// 出力enable
+		if ( RTC_Timer16>=625000 ) {
+		  MFP_Int(15);
+		}
+		if( RTC_Timer1>(625000/2) )    alarm_out = 1;//Alarm端子 1Hz H/L
 	}
+	if ( RTC_Timer16>=625000 ) RTC_Timer16 -= 625000;
+
+return alarm_out;
 }

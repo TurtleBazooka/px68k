@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------------------------------
 
 #include "mfp.h"
+#include "rtc.h"
 #include "irqh.h"
 #include "crtc.h"
 #include "m68000.h"
@@ -158,18 +159,29 @@ uint8_t FASTCALL MFP_Read(uint32_t adr)
 
 	switch(adr & 0x3f)
 	{
-	case 0x01://Reg00
-		if ( (vline>=CRTC_VSTART)&&(vline<CRTC_VEND) )
-			ret = 0x13;
-		else
-			ret = 0x03;
-		int32_t hpos = (int32_t)(ICount%HSYNC_CLK);
+	case 0x01://Reg00  [HSYNC][CIRQ][1][H-SYNC][FMIRQ][POWSW][EXPON:1][ALM]
+		ret = 0x22;//default
+
+		if(RTC_Timer(0)!=0)//ALM 1Hz and 16Hz 出力レベル
+		{
+			ret |= 0x01;
+		}
+
+		if ( (vline>=CRTC_VSTART)&&(vline<CRTC_VEND) )//V-DISP 1:垂直表示 0:帰線時間
+		{
+			ret |= 0x10;
+		}
+
+		int32_t hpos = (int32_t)(ICount%HSYNC_CLK);//H-SYNC
 		if ( (hpos>=((int32_t)CRTC_Regs[5]*HSYNC_CLK/CRTC_Regs[1]))&&(hpos<((int32_t)CRTC_Regs[7]*HSYNC_CLK/CRTC_Regs[1])) )
 			ret &= 0x7f;
 		else
 			ret |= 0x80;
-		if (vline!=CRTC_IntLine)
+
+		if (vline!=CRTC_IntLine)//ラスタ割込 1:要求なし
+		{
 			ret |= 0x40;
+		}
 		break;
 	case 0x03://Reg01
 	case 0x05://Reg02

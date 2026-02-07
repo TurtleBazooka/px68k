@@ -154,7 +154,7 @@ uint8_t FASTCALL SASI_Read(uint32_t adr)
 	/*== 0xe9600x ~ 0xe97ffx==*/
 	switch(adr & 0x07)
 	{
-	case 0x01:
+	case 0x01:// Read Data
 		switch(SASI_Phase)
 		{
 		case 0://BusFree phase
@@ -192,7 +192,7 @@ uint8_t FASTCALL SASI_Read(uint32_t adr)
 			SASI_Phase++;
 		 break;
 		case 5://Massage phase
-			SASI_Phase = 0;			// 0を返すだけxA掘ＢusFreeに帰ります
+			SASI_Phase = 0;			// 0を返すだけ.BusFreeに帰ります
 		 break;
 		case 9://Data phase(for SenseStat)
 			ret = SASI_SenseStatBuf[SASI_SenseStatPtr++];
@@ -211,7 +211,7 @@ uint8_t FASTCALL SASI_Read(uint32_t adr)
 			if (IOC_IntStat&8) IRQH_Int(1, &SASI_Int);
 		}
 		break;
-	case 0x03:
+	case 0x03:// Status
 		if (SASI_Phase)
 			ret |= 2;		// Busy
 		if (SASI_Phase>1)
@@ -358,7 +358,7 @@ void FASTCALL SASI_Write(uint32_t adr, uint8_t data)
 	/*== 0xe9600x ~ 0xe97ffx==*/
 	switch(adr & 0x07)
 	{
-	case 0x01:
+	case 0x01://Data out
 		if (SASI_Phase==2)
 		{
 			SASI_Cmd[SASI_CmdPtr++] = data;
@@ -368,7 +368,7 @@ void FASTCALL SASI_Write(uint32_t adr, uint8_t data)
 				SASI_CheckCmd();
 			}
 		}
-		else if ((SASI_Phase==3)&&(!SASI_RW))		// データライト中xAｷ
+		else if ((SASI_Phase==3)&&(!SASI_RW))		// データライト中
 		{
 			SASI_Buf[SASI_BufPtr++] = data;
 			if (SASI_BufPtr==256)
