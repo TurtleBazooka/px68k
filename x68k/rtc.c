@@ -1,5 +1,7 @@
 // ---------------------------------------------------------------------------------------
 //  RTC.C - RTC (Real Time Clock / RICOH RP5C15)
+// CLKOUT - TimerLED (not emulate)
+// ALARM    PowerLED & MFP-I0
 // ---------------------------------------------------------------------------------------
 
 #include "common.h"
@@ -14,14 +16,15 @@ static int32_t RTC_Timer16 = 0;
 
 
 // -----------------------------------------------------------------------
-//   初期化
+//   初期化(ホントはBuckUpされてる)
 // -----------------------------------------------------------------------
 void RTC_Init(void)
 {
-	memset(&RTC_Regs[1][0], 0, 16);
-	RTC_Regs[0][13] = 0;
-	RTC_Regs[0][14] = 0;
-	RTC_Regs[0][15] = 0x0c;
+	memset(&RTC_Regs[1][0], 0, 16);//Alarm clear
+	RTC_Regs[0][13] = 0x00;
+	RTC_Regs[0][14] = 0x00;
+	RTC_Regs[0][15] = 0x00;
+	RTC_Regs[1][10] = 0x01;//24-hour mode(X68000 default)
 }
 
 
@@ -30,13 +33,25 @@ void RTC_Init(void)
 // -----------------------------------------------------------------------
 uint8_t FASTCALL RTC_Read(uint32_t adr)
 {
+	uint8_t ret = 0xff;
+	uint8_t tm24;
+
 	struct tm *tm;
 	time_t t;
 	t = time(NULL);
 	tm = localtime(&t);
 
+	if(RTC_Regs[1][10] & 0x01)//24-hour system
+	{
+		tm24 = (tm->tm_hour);
+	}
+	else//12-hour system
+	{
+		tm24 = (tm->tm_hour) % 12;
+		if ((tm->tm_hour) >=12) tm24 += 20;//PM set
+	}
+
 	RTC_Bank = RTC_Regs[0][13] & 0x01;
-	uint8_t ret = 0xff;
 
 	/*0xe8a000 ~ 0xe8bfff*/
 	if (RTC_Bank == 0)
@@ -47,8 +62,8 @@ uint8_t FASTCALL RTC_Read(uint32_t adr)
 		case 0x03: ret&=0xf0; ret|=((tm->tm_sec)/10 & 0x0f); break;
 		case 0x05: ret&=0xf0; ret|=((tm->tm_min)%10 & 0x0f); break;
 		case 0x07: ret&=0xf0; ret|=((tm->tm_min)/10 & 0x0f); break;
-		case 0x09: ret&=0xf0; ret|=((tm->tm_hour)%10 & 0x0f); break;
-		case 0x0b: ret&=0xf0; ret|=((tm->tm_hour)/10 & 0x0f); break;
+		case 0x09: ret&=0xf0; ret|=((tm24)%10 & 0x0f); break;
+		case 0x0b: ret&=0xf0; ret|=((tm24)/10 & 0x0f); break;
 		case 0x0d: ret&=0xf0; ret|=((tm->tm_wday) & 0x0f); break;
 		case 0x0f: ret&=0xf0; ret|=((tm->tm_mday)%10 & 0x0f); break;
 		case 0x11: ret&=0xf0; ret|=((tm->tm_mday)/10 & 0x0f); break;
@@ -144,19 +159,30 @@ void FASTCALL RTC_Write(uint32_t adr, uint8_t data)
 		}
 	}
 
+	if (RTC_Regs[0][15] & 0x01)// Resets all alarm reg.
+	{
+	 memset(&RTC_Regs[1][1], 0, 8);//Alarm clear
+	}
+
+	if (RTC_Regs[0][15] & 0x02)// Timer Reset 
+	{
+	 RTC_Timer1 = RTC_Timer16 = 0;
+	}
 }
 
-
+// Ret:/ALARM out  (1Hz,16Hz,ALARM)
 int RTC_Timer(int32_t clock)
 {
-	int alarm_out = 0;//Alarm端子の出力 1Hz & 16Hz
+	int alarm_out = 0;//Alarm端子の出力 1Hz & 16Hz & Alarm
 
 	RTC_Timer1  += clock;
 	RTC_Timer16 += clock;
 
-	// 1Hz 割り込みと出力
-	if ( !(RTC_Regs[0][15] & 0x08) ){// 出力enable
-		if ( RTC_Timer1>=10000000 ){
+	// == 1Hz 割り込みと出力 ==
+	if ( !(RTC_Regs[0][15] & 0x08) )// 出力enable
+	{
+		if ( RTC_Timer1>=10000000 )
+		{
 		  MFP_Int(15);
 		  RTC_Timer1 -= 10000000;
 		}
@@ -164,15 +190,23 @@ int RTC_Timer(int32_t clock)
 	}
 	if ( RTC_Timer1>=10000000 ) RTC_Timer1 -= 10000000;
 
-	// 16Hz 割り込みと出力
-	if ( !(RTC_Regs[0][15] & 0x04) ){// 出力enable
-		if ( RTC_Timer16>=625000 ) {
+	// == 16Hz 割り込みと出力 ==
+	if ( !(RTC_Regs[0][15] & 0x04) )// 出力enable
+	{
+		if ( RTC_Timer16>=625000 )
+		{
 		  MFP_Int(15);
 		  RTC_Timer16 -= 625000;
 		}
-		if( RTC_Timer16<(625000/2) )    alarm_out = 1;//Alarm端子 1Hz H/L
+		if( RTC_Timer16<(625000/2) )    alarm_out = 1;//Alarm端子 16Hz H/L
 	}
 	if ( RTC_Timer16>=625000 ) RTC_Timer16 -= 625000;
+
+	// == ALARM出力 ==
+	if ( !(RTC_Regs[0][13] & 0x04) )// AlarmEN
+	{
+		// none
+	}
 
 return alarm_out;
 }
