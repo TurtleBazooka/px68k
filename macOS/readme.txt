@@ -1,4 +1,4 @@
-Part of SDL2/3 for px68k.
+Part of SDL3/2 for px68k.
 written by kameya  2021/11/23
 
 folder [macOS]
@@ -28,20 +28,19 @@ RetroArchのPluginで、PX68Kが出ているのが唯一の救いです。
 
 単独アプリでMacで動くX68Kエミュレータがあったらいいな、と思い
 kenyahiroさんが64bit対応されてましたGitから、Forkさせていただきました。(感謝)
-Framework版のSDL2をメインに、MacBookAir(2014)/Montereyで開発しています。
+Framework版のSDL3をメインに、MacBookAir(2014)/Montereyで開発しています。
 主な特徴は以下です。
-・SDL2/3のGPU活用(Texture、Renderer活用)
+・SDL3/2のGPU活用(Texture、Renderer活用)
 ・フルスクリーンモード追加(F11)
 ・画面表示の実機同等の再現性を追求
 ・24bitカラーで最終画面出力(RGB565→RGBX8888に変更)
 ・輝度変更はCRTみたいに徐々に残光しながら変化します。
-・SDL1は削除(Discon)、SDL2推奨（SDL3は正式発表に備えて対応中）
+・SDL1は削除(Discon)、SDL3推奨（SDL2も絶賛サポート中）
 ・SCSIのDiskImageサポート(*.HDSからBootできます。)
 ・MOイメージサポート(128/230/540/640MBの*.MOSをマウント可)
 ・MIDI演奏に対応(Win/Mac)　※Linuxは現状Fluidsynthのみ
 ・MIDI-INも一応対応(Win/Mac)
 ・SoundはStreamingになります。(SDL3)
-・MercuryをEnableしました。(SDL3)
 ・PrintOutをFileに出力
 ・USキーボードのサポート(keyconf.datを.keropiに入れてください)
 ・cgrom.tmpを自前生成可能(cgrom.datは公式からは配布されてない)
@@ -55,8 +54,8 @@ Framework版のSDL2をメインに、MacBookAir(2014)/Montereyで開発してい
 ・Macの単独アプリとしての生成リソースを追加
 
 [実行]
-SDL2のFrameWorkを/Library/Frameworksに入れておいてください。
-cgrom.tmpを自前生成する場合はSDL2_ttf.frameworkも必要です。
+SDL3/2のFrameWorkを/Library/Frameworksに入れておいてください。
+cgrom.tmpを自前生成する場合はSDL3_ttf.frameworkも必要です。
 
 [コンパイル]
 % make
