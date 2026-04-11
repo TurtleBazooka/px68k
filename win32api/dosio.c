@@ -363,7 +363,7 @@ cutyen(char* str)
 void
 plusyen(char* str, int32_t len)
 {
-	int32_t	pos = (int32_t)strlen(str);
+	int32_t pos = (int32_t)strlen(str);
 
 	if (pos) {
 		if (str[pos-1] == '/')

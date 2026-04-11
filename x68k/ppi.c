@@ -1,5 +1,9 @@
 //==========================
-//  ppi.c - i8255A-PPI
+// ppi.c - i8255A-PPI
+// port A GamePad0    --in
+// port B GamePad1    --in
+// port C ADPCM_Data  --out
+//        GamePadCont --out
 //==========================
 
 #include "common.h"
@@ -8,6 +12,7 @@
 #include "m68000.h"
 #include "GamePad.h"
 
+// 8255 Register Set
 typedef struct {
 	uint8_t PortA;
 	uint8_t PortB;
@@ -56,7 +61,7 @@ void FASTCALL PPI_Write(uint32_t adr, uint8_t data)
 			portc = ppi.PortC;//保存
 			bit   = (data>>1)&7;// bit NO.
 			mask  = 1<<bit;
-			if ( data&1 )    //Set/Reset
+			if ( data&1 )    //Set or Reset
 				ppi.PortC |= mask;
 			else
 				ppi.PortC &= ~mask;

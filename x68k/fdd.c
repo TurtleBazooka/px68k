@@ -54,7 +54,7 @@ static int32_t GetDiskType(char* file)
 	int32_t ret = FD_XDF;
 	p = strrchr(file, '.');
 	if ( p ) {
-		memset(tmp, 0, 8);
+		memset(tmp, 0, sizeof(tmp));
 		strncpy(tmp, p+1, 3);
 		ConvertCapital((char*)tmp);
 		if ( (!strncmp(tmp, "D88", 3))||(!strncmp(tmp, "88D", 3)) )

@@ -1826,6 +1826,8 @@ void WinDraw_DrawMenu(int32_t menu_state, int32_t mkey_pos, int32_t mkey_y, int3
 		for (i = 0; i < p6m_colum_h; i++) {
 		 set_mlocateC(0, 1 + i);
 		 draw_str(twaku2_str,1);
+		 set_mlocateC((sizeof(twaku_str)/3*2)-4, 1 + i);
+		 draw_str(twaku2_str,1);//Right
 		}
 		set_mlocateC(0, 1 + p6m_colum_h);
 		draw_str(twaku3_str,1);
@@ -1861,6 +1863,10 @@ void WinDraw_DrawMenu(int32_t menu_state, int32_t mkey_pos, int32_t mkey_y, int3
 		for (i = 0; i < p6m_colum_m; i++) {
 			set_mlocateC(1, 5 + i);
 			draw_str(waku2_str,1);
+			set_mlocateC(15, 5 + i);
+			draw_str(waku2_str,1);//Center
+			set_mlocateC((sizeof(waku_str)/3*2)-3, 5 + i);
+			draw_str(waku2_str,1);//Right
 		}
 		set_mlocateC(1, 5 + p6m_colum_m);
 		draw_str(waku3_str,1);
@@ -1952,6 +1958,8 @@ void WinDraw_DrawMenu(int32_t menu_state, int32_t mkey_pos, int32_t mkey_y, int3
 		for (i = 0; i < p6m_colum_l; i++) {
 		 set_mlocateC(0, 19 + i);
 		 draw_str(swaku2_str,1);
+		 set_mlocateC((sizeof(swaku_str)/3*2)-6, 19 + i);
+		 draw_str(swaku2_str,1);
 		}
 		set_mlocateC(0, 19 + p6m_colum_l);
 		draw_str(swaku3_str,1);
@@ -1991,7 +1999,13 @@ void WinDraw_DrawMenufile(struct menu_flist *mfl)
 	set_mlocateC(1, 1);
 	draw_str(swaku_str,1);
 	for (i = 0; i < p6m_colum_f; i++) {
+		set_mcolor(0x00000000);//clear
 		set_mlocateC(1, 2 + i);
+		draw_str(swaku_str,1);
+		set_mcolor(0xffffff00);//Left
+		set_mlocateC(1, 2 + i);
+		draw_str(swaku2_str,1);
+		set_mlocateC((sizeof(swaku_str)/3*2)-5, 2 + i);//Right
 		draw_str(swaku2_str,1);
 	}
 	set_mlocateC(1, 2 + p6m_colum_f);

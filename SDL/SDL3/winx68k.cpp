@@ -17,7 +17,6 @@ extern "C" {
 #include "winx68k.h"
 #include "windraw.h"
 #include "winui.h"
-//#include "../x68k/m68000.h" // xxx これはいずれいらなくなるはず
 #include "../m68000/m68000.h"
 //#include "../m68000/c68k/c68k.h"
 #include "../x68k/x68kmemory.h"

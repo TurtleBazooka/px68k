@@ -156,9 +156,6 @@ void fname_mix(char* str, char* mix, int32_t size);
 #define DD_YEAR_MASK		0xFE00	/* year - 1980 */
 #define DD_YEAR_SHIFT		9
 
-#ifdef _WIN32
-typedef unsigned int u_int;
-#endif
 void unix2dostime(time_t t, uint16_t *ddp, uint16_t *dtp, uint8_t *dhp);
 void dos2unixtime(uint32_t dd, uint32_t dt, uint32_t dh, time_t *tp);
 

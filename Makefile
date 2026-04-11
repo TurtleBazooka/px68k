@@ -94,7 +94,6 @@ endif
 
 include version.txt
 
-
 ifeq "$(PLATFORM)" "Darwin"
 CC	 = clang -std=c17 -arch x86_64 -arch arm64
 CXX	 = clang++ -std=c++17 -arch x86_64 -arch arm64
@@ -163,11 +162,6 @@ CDEBUGFLAGS+=-DPX68K_VERSION=$(PX68K_VERSION)
 
 CDEBUGFLAGS+=-DHAVE_STDINT_H
 
-# SDL_INCLUDE=	`$(SDL_CONFIG) --cflags`
-# SDL_LIB=		`$(SDL_CONFIG) --libs`
-
-LDLIBS = -lm -lpthread
-
 # MIDI option NO_MIDI=1 or FLUID=1
 # macOS:CoreAudio/CoreMIDI Linux:Fluidsynth Win:winmm
 #
@@ -180,9 +174,9 @@ FLUID_INCLUDE=  -I/Library/Frameworks/FluidSynth.framework/Headers
 FLUID_LIB= -F/Library/Frameworks -framework FluidSynth
 MIDIOBJS= x68k/midi_fluid.o
 else
-LDLIBS+= -framework Cocoa -framework CoreMIDI
 MIDIOBJS= x68k/midi_darwin.o
 endif
+LDLIBS+= -framework Cocoa -framework CoreMIDI
 else
 ifeq "$(PLATFORM)" "Linux"
 ifdef FLUID
@@ -191,6 +185,7 @@ MIDIOBJS= x68k/midi_fluid.o
 else
 MIDIOBJS= x68k/midi_alsa.o
 endif
+LDLIBS = -lm -lpthread
 # 
 else
 # Cygwin for MIDI (winmm.lib)

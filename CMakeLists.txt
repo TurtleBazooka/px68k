@@ -66,12 +66,12 @@ if(SDL2)
  add_definitions( -DSDL2 )
  find_package(SDL2 REQUIRED)
 # find_package(SDL2_ttf REQUIRED)
-# find_library(SDLTTF_LIB SDL2_ttf)
+# find_library(SDLTTF_LIBRARY SDL2_ttf)
 else()
   message(" - define SDL3")
  find_package(SDL3 REQUIRED)
 # find_package(SDL3_ttf REQUIRED)
-# find_library(SDLTTF_LIB SDL3_ttf)
+# find_library(SDLTTF_LIBRARY SDL3_ttf)
 endif()
 
 if(APPLE)
@@ -241,24 +241,28 @@ endif()
 if(px68k_midi_alsa)
   set(NEED_PTHREAD ON)
   find_package(ALSA)
-  if (NOT ALSA_FOUND)
-    message(FATAL_ERROR "ALSA API requested but no ALSA dev libraries found")
+  if (ALSA_FOUND)
+   list(APPEND MIDI_SRC "x68k/midi_alsa.c")
+   find_library(ALSA_LIBRARY ALSA)
+   list(APPEND LINKLIBS ALSA::ALSA)
+   list(APPEND PACKAGE_DEPENDENCIES "find_dependency(ALSA)")
+  else()
+   message(FATAL_ERROR "ALSA API requested but no ALSA dev libraries found")
   endif()
-  list(APPEND MIDI_SRC "x68k/midi_alsa.c")
-  list(APPEND LINKLIBS ALSA::ALSA)
-  list(APPEND PACKAGE_DEPENDENCIES "find_dependency(ALSA)")
 endif()
 
 # == fluidsynth(macOS/Linux/win) ==
 if(px68k_midi_fluid)
-  list(APPEND MIDI_SRC "x68k/midi_fluid.c")
+ list(APPEND MIDI_SRC "x68k/midi_fluid.c")
  if (APPLE)
   find_library(FLUID_LIBRARY FluidSynth)
   list(APPEND FLUID_INCLUDE_DIR "${FLUID_LIBRARY}/Headers")
-  list(APPEND LINKLIBS "${FLUID_LIBRARY}")
  else()
-  find_package(FluidSynth)
-  list(APPEND LINKLIBS fluidSynth)
+  find_package(FluidSynth QUIET REQUIRED)
+  if (FluidSynth_FOUND)
+   list(APPEND LINKLIBS FluidSynth::libfluidsynth)
+  endif()
+  find_library(FLUID_LIBRARY FluidSynth)
  endif()
 endif()
 
@@ -326,7 +330,8 @@ set(CPACK On)
   target_link_libraries(${BIN_TARGET} PRIVATE ${LINKLIBS}
                         ${SDL3_LIBRARIES}
                         ${SDL2_LIBRARIES}
-						${SDLTTF_LIB}
+						${SDLTTF_LIBRARY}
+						${FLUID_LIBRARY}
   )
 
 # == Excute Packaging ==
