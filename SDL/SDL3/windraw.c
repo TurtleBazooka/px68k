@@ -1246,10 +1246,10 @@ void WinDraw_DrawLine(void)
 		break;
 	}
 
-  static uint16_t VCstore;
-  if(VCstore != (VCReg1[0]<<8 | VCReg2[0])){
-    p6logd("Pri:%02X→%02X %02X  gon:%d tron:%d ton:%d bgon:%d\n",VCReg1[0],priK,VCReg2[0],gon,tron,ton,bgon);
-    VCstore = (VCReg1[0]<<8 | VCReg2[0]);
+  static uint32_t VCstore;
+  if(VCstore != (VCReg1[0]<<24 | VCReg1[1]<<16 | VCReg2[0]<<8 | VCReg2[1])){
+    p6logd("Pri:%02X→%02X %02X %02X gon:%d tron:%d ton:%d bgon:%d\n",VCReg1[0],priK,VCReg2[0],VCReg1[1],gon,tron,ton,bgon);
+    VCstore = (VCReg1[0]<<24 | VCReg1[1]<<16 | VCReg2[0]<<8 | VCReg2[1]);
   }
 
 	opaq = 1;//1:初回描画 0:重ね合わせ(td 1:Text_TrFla含む 0:通常の重ね合わせ)
@@ -1269,7 +1269,7 @@ void WinDraw_DrawLine(void)
 			opaq = 0;
 		}
 		if (ton){//TX1
-			WinDraw_DrawTextLine(opaq, gon);// TXをBGに重ね合わせ
+			WinDraw_DrawTextLine(opaq, bgon);// TXをBGに重ね合わせ Splite画面OFFなら非透過:0
 			opaq = 0;
 			tdrawed = 1;
 		}
@@ -1327,7 +1327,7 @@ void WinDraw_DrawLine(void)
 			if( (tron) && ((VCReg2[0]&0x5d)==0x1d))//GR+TX透過
 				WinDraw_DrawTextLineTR(opaq);
 			else
-				WinDraw_DrawTextLine(opaq, tdrawed);//(非透過)
+				WinDraw_DrawTextLine(opaq, 0);//直転送
 			opaq = 0;
 			tdrawed = 1;
 		}
