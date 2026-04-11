@@ -7,6 +7,7 @@
 ## License
 * 大元のオリジナルソースの著作は、けんじょさんのWinX68k(けろぴー)です。(http://retropc.net/kenjo)
 * c68k(MC68000 Emu.)はStephane Dallongeville氏がyabauseの一部としてGPLv2で公開されているものです。
+* MusashiはKarl Stenerud氏によるemulation engineです。(https://github.com/kstenerud/Musashi)
 * FM音源合成のfmgenは、cisc氏の著作物です。(詳しくはfmgen/readme.txt参照)
 * YMFMはBSD-licensedで公開されています。(https://github.com/aaronsgiles/ymfm)
 
