@@ -214,9 +214,12 @@ else()
 endif()
 
 set(m68k_sources
-  m68000/m68000.c
   m68000/c68k/c68k.c
   m68000/c68k/c68kexec.c
+  m68000/m68000m.c
+  m68000/Musashi/m68kcpu.c
+  m68000/Musashi/m68kops.c
+  m68000/Musashi/softfloat/softfloat.c
 )
 
 # == Set Windows icon==

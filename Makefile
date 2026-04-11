@@ -209,8 +209,11 @@ CXXFLAGS= $(MOPT) $(CXXDEBUGFLAGS) $(EXTRA_INCLUDES)
 CXXLDOPTIONS= $(CXXDEBUGFLAGS)
 
 
-CPUOBJS= x68k/d68k.o m68000/m68000.o
-C68KOBJS= m68000/c68k/c68k.o m68000/c68k/c68kexec.o
+CPUOBJS   =  m68000/m68000m.o
+CPUOBJS  += x68k/d68k.o
+
+M68KOBJS  = m68000/Musashi/m68kcpu.o m68000/Musashi/m68kops.o m68000/Musashi/softfloat/softfloat.o
+M68KOBJS += m68000/c68k/c68k.o m68000/c68k/c68kexec.o
 
 X68KOBJS= x68k/adpcm.o x68k/bg.o x68k/crtc.o x68k/dmac.o x68k/fdc.o x68k/fdd.o x68k/disk_d88.o x68k/disk_dim.o x68k/disk_xdf.o x68k/gvram.o x68k/ioc.o x68k/irqh.o x68k/mem_wrap.o x68k/mercury.o x68k/mfp.o x68k/palette.o x68k/midi.o x68k/ppi.o x68k/rtc.o x68k/sasi.o x68k/scc.o x68k/scsi.o x68k/sram.o x68k/sysport.o x68k/tvram.o
 
@@ -244,7 +247,7 @@ endif
 WIN32APIOBJS= win32api/dosio.o win32api/fake.o win32api/peace.o
 CGROMOBJS=	SDL/mkcgrom.o SDL/tool/create_cgrom.o
 
-COBJS=		$(X68KOBJS) $(SDLOBJS) $(WIN32APIOBJS) $(CPUOBJS) $(C68KOBJS) $(MIDIOBJS)
+COBJS=		$(X68KOBJS) $(SDLOBJS) $(WIN32APIOBJS) $(CPUOBJS) $(M68KOBJS) $(MIDIOBJS)
 CXXOBJS=	$(FMGENOBJS) $(SDLCXXOBJS)
 
 CSRCS=		$(COBJS:.o=.c)
@@ -261,7 +264,7 @@ OBJS		+= $(addprefix $(OBJDIR)/, $(CXXOBJS))
 MKCGROMOBJS	  = $(addprefix $(OBJDIR)/, $(WIN32APIOBJS))
 MKCGROMOBJS	 += $(addprefix $(OBJDIR)/, $(CGROMOBJS))
 
-OBJDIRS		= $(OBJDIR) $(OBJDIR)/m68000 $(OBJDIR)/m68000/c68k \
+OBJDIRS		= $(OBJDIR) $(OBJDIR)/m68000 $(OBJDIR)/m68000/c68k $(OBJDIR)/m68000/Musashi $(OBJDIR)/m68000/Musashi/softfloat \
 		  	$(OBJDIR)/fmgen $(OBJDIR)/win32api $(OBJDIR)/ymfm $(OBJDIR)/ymfm/src \
 		  	$(OBJDIR)/SDL $(OBJDIR)/SDL/tool $(OBJDIR)/SDL/SDL2 $(OBJDIR)/SDL/SDL3 \
 			$(OBJDIR)/x68k

@@ -48,7 +48,7 @@ typedef struct
 	int32_t SSTP_Enable;
 	int32_t SSTP_Port;
 	int32_t Sound_LPF;
-	int32_t SoundROMEO;
+	int32_t CPU_Emu;
 	int32_t MIDIDelay;
 	int32_t MIDIAutoDelay;
 	char FDDImage[2][MAX_PATH];

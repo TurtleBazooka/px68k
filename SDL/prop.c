@@ -267,8 +267,7 @@ void LoadConfig(void)
 	Config.DSAlert = solveBOOL(buf);
 	GetPrivateProfileString((const char*)ini_title, "SoundLPF", "1", buf, CFGLEN, winx68k_ini);
 	Config.Sound_LPF = solveBOOL(buf);
-	GetPrivateProfileString((const char*)ini_title, "UseRomeo", "0", buf, CFGLEN, winx68k_ini);
-	Config.SoundROMEO = solveBOOL(buf);
+	Config.CPU_Emu = GetPrivateProfileInt((const char*)ini_title, "M68000_Emu", 0, winx68k_ini);
 	GetPrivateProfileString((const char*)ini_title, "MIDI_SW", "1", buf, CFGLEN, winx68k_ini);
 	Config.MIDI_SW = solveBOOL(buf);
 	GetPrivateProfileString((const char*)ini_title, "MIDI_Reset", "0", buf, CFGLEN, winx68k_ini);
@@ -419,7 +418,8 @@ void SaveConfig(void)
 
 	WritePrivateProfileString((const char*)ini_title, "DSAlert", makeBOOL((uint8_t)Config.DSAlert), winx68k_ini);
 	WritePrivateProfileString((const char*)ini_title, "SoundLPF", makeBOOL((uint8_t)Config.Sound_LPF), winx68k_ini);
-	WritePrivateProfileString((const char*)ini_title, "UseRomeo", makeBOOL((uint8_t)Config.SoundROMEO), winx68k_ini);
+	sprintf(buf, "%d", Config.CPU_Emu);
+	WritePrivateProfileString((const char*)ini_title, "M68000_Emu", buf, winx68k_ini);
 	WritePrivateProfileString((const char*)ini_title, "MIDI_SW", makeBOOL((uint8_t)Config.MIDI_SW), winx68k_ini);
 	WritePrivateProfileString((const char*)ini_title, "MIDI_Reset", makeBOOL((uint8_t)Config.MIDI_Reset), winx68k_ini);
 	sprintf(buf, "%d", Config.MIDI_Type);

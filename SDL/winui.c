@@ -113,7 +113,7 @@ char menu_item_key[][18] = {"SYSTEM", "Joy/Mouse", "FDD0", "FDD1", "HDD0", "HDD1
 // Max # of characters is 30.
 // Max # of items including terminater `""' in each line is 15.
 char menu_items[][18][100] = {
-	{"RESET", "NMI RESET", "QUIT", "Eject MO", "SRAM-Clear and RESET", ""},
+	{"RESET", "NMI RESET", "QUIT", "Eject MO", "SRAM-Clear and RESET", "C68K Emulator with. RST", "Musashi Emulator with. RST", ""},
 	{"Joystick", "Mouse", ""},
 	{"dummy", "EJECT", ""},
 	{"dummy", "EJECT", ""},
@@ -374,6 +374,9 @@ int32_t mkey_pos = 0;
 static void menu_system(int32_t v)
 {
 	switch (v) {
+	case 0 :
+		WinX68k_Reset();
+		break;
 	case 1:
 		IRQH_Int(7, NULL);
 		break;
@@ -385,8 +388,17 @@ static void menu_system(int32_t v)
 		break;
 	case 4:
 		SRAM_Clear();
-	case 0 :
 		WinX68k_Reset();
+		break;
+	case 5:
+		Config.CPU_Emu = 0; /*Select c68k Emulator*/
+		WinX68k_Reset();
+		break;
+	case 6:
+		Config.CPU_Emu = 1; /*Select Musashi Emulator*/
+		WinX68k_Reset();
+		break;
+	default:
 		break;
 	}
 	ScreenClearFlg=1;
