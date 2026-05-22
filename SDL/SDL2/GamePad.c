@@ -193,8 +193,8 @@ void GameController_Open(void)//未使用
 
 	nr_joys = SDL_NumJoysticks();
 	if (nr_joys == 0){
-	 strcpy(menu_items[13][0],No_GamePad);
-	 strcpy(menu_items[13][1],"\0"); // Menu END
+	 strcpy(menu_items[GamePad_menu_item][0],No_GamePad);
+	 strcpy(menu_items[GamePad_menu_item][1],"\0"); // Menu END
 	 return;
 	}
 
@@ -203,16 +203,16 @@ void GameController_Open(void)//未使用
 		if ( SDL_IsGameController(i) )
 		{
 			name = SDL_GameControllerNameForIndex(i);
-			strcpy(menu_items[13][i],name);
+			strcpy(menu_items[GamePad_menu_item][i],name);
 			//p6logd("Game Controller %d: %s\n", i, name ? name : "Unknown Controller");
 			p6logd("GameController No.%d %s connected.\n", i,name);
 		}
 		else{
-		  strcpy(menu_items[13][i],"Not compatible GameController");
+		  strcpy(menu_items[GamePad_menu_item][i],"Not compatible GameController");
 		  p6logd("No.%d Not compatible GameController interface.\n", i);
 		}
     }
-	strcpy(menu_items[13][i],"\0"); // Menu END
+	strcpy(menu_items[GamePad_menu_item][i],"\0"); // Menu END
 	sdl_gamepad = SDL_GameControllerOpen(0);// default
 
  return;
@@ -242,8 +242,8 @@ void GameController_Init(void)
 
 	SDL_Init(SDL_INIT_GAMECONTROLLER);
 
-	strcpy(menu_items[13][0],No_GamePad);
-	strcpy(menu_items[13][1],"\0"); // Menu END
+	strcpy(menu_items[GamePad_menu_item][0],No_GamePad);
+	strcpy(menu_items[GamePad_menu_item][1],"\0"); // Menu END
 
 	sdl_gamepad = NULL;
 	PadNo[0] = 0;
@@ -296,16 +296,16 @@ void GameController_Add(int padid)
   int flg = 0;
 
 	for(id=0; id<10; id++){
-	 if(strncmp(menu_items[13][id],No_GamePad,sizeof(No_GamePad))==0){ flg = 0; break; }
-	 if(strncmp(menu_items[13][id],"\0",sizeof("\0"))==0){ flg = 1; break; }
+	 if(strncmp(menu_items[GamePad_menu_item][id],No_GamePad,sizeof(No_GamePad))==0){ flg = 0; break; }
+	 if(strncmp(menu_items[GamePad_menu_item][id],"\0",sizeof("\0"))==0){ flg = 1; break; }
 	}
 
 	sdl_gamepad = SDL_GameControllerOpen( padid );
 	GamePadID[id] = SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(sdl_gamepad));
-	strcpy(menu_items[13][id],SDL_GameControllerNameForIndex(padid));
-	if(flg==1) strcpy(menu_items[13][id+1],"\0"); // Menu item END
+	strcpy(menu_items[GamePad_menu_item][id],SDL_GameControllerNameForIndex(padid));
+	if(flg==1) strcpy(menu_items[GamePad_menu_item][id+1],"\0"); // Menu item END
 
-	p6logd("Add %s as %d.\n",menu_items[13][id],GamePadID[id]);
+	p6logd("Add %s as %d.\n",menu_items[GamePad_menu_item][id],GamePadID[id]);
 	GamePad_Change(0);//常に0＝Port0がDefault
 	return;
 }
@@ -317,9 +317,9 @@ void GameController_Removed(SDL_JoystickID padid)
 	 for(id=0; id<10; id++){
 	  if(GamePadID[id] == padid){
 		GamePadID[id] = 0;//無効化
-		p6logd("Removed %s as %d.\n",menu_items[13][id],padid);
-		strcpy(menu_items[13][id],No_GamePad);
-		//strcpy(menu_items[13][id+1],"\0"); // Menu item END
+		p6logd("Removed %s as %d.\n",menu_items[GamePad_menu_item][id],padid);
+		strcpy(menu_items[GamePad_menu_item][id],No_GamePad);
+		//strcpy(menu_items[GamePad_menu_item][id+1],"\0"); // Menu item END
 	  }
 	 }
 

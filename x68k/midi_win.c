@@ -46,12 +46,12 @@ mid_inDevList(LPHMIDIOUT phmo)
   for(devid = 0; devid<num; devid++){
     res=midiInGetDevCapsA(devid, &InCaps, sizeof(InCaps));
     if(res == MMSYSERR_NOERROR){
-     strcpy(menu_items[9][menu_no_in], InCaps.szPname);
+     strcpy(menu_items[MIDI_IN_menu_item][menu_no_in], InCaps.szPname);
      menu_no_in++;
     }
   }
   }
-  strcpy(menu_items[9][menu_no_in], "\0");
+  strcpy(menu_items[MIDI_IN_menu_item][menu_no_in], "\0");
 
  return (num);
 }
@@ -78,12 +78,12 @@ mid_outDevList(LPHMIDIOUT phmo)
   for(devid = 0; devid<num; devid++){
     res=midiOutGetDevCapsA(devid, &OutCaps, sizeof(OutCaps));
     if(res == MMSYSERR_NOERROR){
-     strcpy(menu_items[8][menu_no_out], OutCaps.szPname);
+     strcpy(menu_items[MIDI_OUT_menu_item][menu_no_out], OutCaps.szPname);
      menu_no_out++;
     }
   }
   }
-  strcpy(menu_items[8][menu_no_out], "\0");
+  strcpy(menu_items[MIDI_OUT_menu_item][menu_no_out], "\0");
 
  return (num);
 }

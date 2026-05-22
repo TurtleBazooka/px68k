@@ -33,6 +33,13 @@ struct menu_flist {
 
 extern char menu_item_key[][18];
 extern char menu_items[][18][100];
+
+// GamePad nameを格納するmenu_itemは何番目？
+#define GamePad_menu_item   13
+// MIDI IN/OUTを格納するmenu_itemは何番目？
+#define MIDI_OUT_menu_item   8
+#define MIDI_IN_menu_item    9
+
 extern int32_t JoyDirection;
 
 int32_t WinUI_get_drv_num(int32_t key);

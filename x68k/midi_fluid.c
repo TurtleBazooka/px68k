@@ -65,9 +65,9 @@ mid_outDevList(LPHMIDIOUT phmo)
 	}
 
 	/* set menu */
-	strcpy(menu_items[8][Device_num],synth_name);
+	strcpy(menu_items[MIDI_OUT_menu_item][Device_num],synth_name);
 	Device_num ++;
-	strcpy(menu_items[8][Device_num],"\0"); /* Menu END */
+	strcpy(menu_items[MIDI_OUT_menu_item][Device_num],"\0"); /* Menu END */
 
 	*phmo = (HANDLE)mid_name; /*MIDI Active!(ダミーを代入しておく)*/
 

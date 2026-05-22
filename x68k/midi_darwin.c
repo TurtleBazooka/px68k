@@ -114,13 +114,13 @@ mid_outDevList(LPHMIDIOUT phmo)
 			 strRef = epstrRef;
 			}
 			//kCFStringEncodingUTF8：UTF8でポートの名前(string)を取り出す
-			CFStringGetCString(strRef, menu_items[8][Device_num], sizeof(menu_items[8][Device_num]), kCFStringEncodingUTF8);
-			p6logd("Find MIDI out:%s\n",menu_items[8][Device_num]);
+			CFStringGetCString(strRef, menu_items[MIDI_OUT_menu_item][Device_num], sizeof(menu_items[MIDI_OUT_menu_item][Device_num]), kCFStringEncodingUTF8);
+			p6logd("Find MIDI out:%s\n",menu_items[MIDI_OUT_menu_item][Device_num]);
 			Device_num ++;
 		}
 	 }
 	CFRelease(strRef);
-	strcpy(menu_items[8][Device_num],"\0"); // Menu END 
+	strcpy(menu_items[MIDI_OUT_menu_item][Device_num],"\0"); // Menu END 
 
 	if(core_mid_num != 0){
 	  *phmo = (HANDLE)mid_name; //MIDI Active!(ダミーを代入しておく)
@@ -180,13 +180,13 @@ mid_inDevList(LPHMIDIOUT phmo)
 	    strRef = epstrRef;
 	   }
 	   //kCFStringEncodingUTF8：UTF8でポートの名前(string)を取り出す
-	   CFStringGetCString(strRef, menu_items[9][Device_num], sizeof(menu_items[9][Device_num]),kCFStringEncodingUTF8);
-	   p6logd("Find MIDI in :%s\n",menu_items[9][Device_num]);
+	   CFStringGetCString(strRef, menu_items[MIDI_IN_menu_item][Device_num], sizeof(menu_items[MIDI_IN_menu_item][Device_num]),kCFStringEncodingUTF8);
+	   p6logd("Find MIDI in :%s\n",menu_items[MIDI_IN_menu_item][Device_num]);
 	   Device_num ++;
 	  }
 	 }
 	CFRelease(strRef);
-	strcpy(menu_items[9][Device_num],"\0"); // Menu END
+	strcpy(menu_items[MIDI_IN_menu_item][Device_num],"\0"); // Menu END
 
 	if(core_mid_num != 0){
 	  *phmo = (HANDLE)mid_name; //MIDI Active!(ダミーを代入しておく)

@@ -7,12 +7,11 @@
 ******************************************************************************/
 #include "irqh.h"
 #include "prop.h"
-#include "m68000.h"
 #include "../x68k/x68kmemory.h"
 
-#include "c68k/c68k.h"
 #include "Musashi/m68k.h"
 #include "Musashi/m68kcpu.h"
+#include "m68000.h"
 
 int32_t m68000_ICountBk;
 int32_t ICount;
