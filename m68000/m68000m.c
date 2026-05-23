@@ -55,9 +55,18 @@ void c68k_init(void)
 --------------------------------------------------------*/
 void m68000_init(void)
 {
+	unsigned int MPU_Type;
+
+	switch(Config.CPU_Emu)
+	{
+	 case 68020: MPU_Type = M68K_CPU_TYPE_68020; break;
+	 case 68030: MPU_Type = M68K_CPU_TYPE_68030; break;
+	 default:    MPU_Type = M68K_CPU_TYPE_68000; break;
+	}
+
 	c68k_init();// c68k Emu
 
-    m68k_set_cpu_type(M68K_CPU_TYPE_68000);// Musashi Emu
+    m68k_set_cpu_type(MPU_Type);// Musashi Emu
     m68k_init();
 
 }

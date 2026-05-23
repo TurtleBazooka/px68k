@@ -31,14 +31,14 @@ struct menu_flist {
 	int32_t y;
 };
 
-extern char menu_item_key[][18];
-extern char menu_items[][18][100];
+extern char menu_item_key[][19];
+extern char menu_items[][19][100];
 
 // GamePad nameを格納するmenu_itemは何番目？
-#define GamePad_menu_item   13
+#define GamePad_menu_item   14
 // MIDI IN/OUTを格納するmenu_itemは何番目？
-#define MIDI_OUT_menu_item   8
-#define MIDI_IN_menu_item    9
+#define MIDI_OUT_menu_item   9
+#define MIDI_IN_menu_item   10
 
 extern int32_t JoyDirection;
 

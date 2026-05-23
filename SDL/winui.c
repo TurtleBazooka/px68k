@@ -100,20 +100,21 @@ struct menu_flist mfl;
 
 /***** menu items *****/
 
-#define MENU_NUM 17
+#define MENU_NUM 18
 #define MENU_WINDOW 12
 
-int32_t mval_y[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 1, 1}; /*初期値*/
+int32_t mval_y[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 1, 1}; /*初期値*/
 
-enum menu_id {M_SYS, M_JOM, M_FD0, M_FD1, M_HD0, M_HD1, M_FS, M_SR, M_MO, M_MI, M_VKS, M_VBS, M_JMD, M_HJS, M_NW, M_JK, M_RAM};
+enum menu_id {M_SYS, M_TYP, M_JOM, M_FD0, M_FD1, M_HD0, M_HD1, M_FS, M_SR, M_MO, M_MI, M_VKS, M_VBS, M_JMD, M_HJS, M_NW, M_JK, M_RAM};
 
-// Max # of characters is 17.
-char menu_item_key[][18] = {"SYSTEM", "Joy/Mouse", "FDD0", "FDD1", "HDD0", "HDD1", "Frame Skip", "Sound Rate", "MIDI Out", "MIDI In ", "VKey Size", "VBtn Swap", "GamePad Mode", "USB GamePad", "No Wait Mode", "JoyKey", "RAM", "uhyo", ""};
+// Max # of characters is 18.
+char menu_item_key[][19] = {"SYSTEM", "MPU Emulator", "Joy/Mouse", "FDD0", "FDD1", "HDD0", "HDD1", "Frame Skip", "Sound Rate", "MIDI Out", "MIDI In ", "VKey Size", "VBtn Swap", "GamePad Mode", "USB GamePad", "No Wait Mode", "JoyKey", "RAM", "uhyo", ""};
 
 // Max # of characters is 30.
 // Max # of items including terminater `""' in each line is 15.
-char menu_items[][18][100] = {
-	{"RESET", "NMI RESET", "QUIT", "Eject MO", "SRAM-Clear and RESET", "C68K Emulator with. RST", "Musashi Emulator with. RST", ""},
+char menu_items[][19][100] = {
+	{"RESET", "NMI RESET", "QUIT", "Eject MO", "SRAM-Clear and RESET", ""},
+	{"C68K 68000 Emulator with RST", "Musashi 68000 Emulator with RST", "Musashi 68020 Emulator with RST", "Musashi 68030 Emulator with RST", ""},
 	{"Joystick", "Mouse", ""},
 	{"dummy", "EJECT", ""},
 	{"dummy", "EJECT", ""},
@@ -133,6 +134,7 @@ char menu_items[][18][100] = {
 };
 
 static void menu_system(int32_t v);
+static void menu_mpu_type(int32_t v);
 static void menu_joy_or_mouse(int32_t v);
 static void menu_create_flist(int32_t v);
 static void menu_frame_skip(int32_t v);
@@ -153,7 +155,8 @@ struct _menu_func {
 };
 
 struct _menu_func menu_func[] = {
-	{menu_system, 0}, 
+	{menu_system, 0},
+	{menu_mpu_type, 0},
 	{menu_joy_or_mouse, 1},
 	{menu_create_flist, 0},
 	{menu_create_flist, 0},
@@ -209,7 +212,20 @@ WinUI_Init(void)
 {
 	int32_t i;
 
+	if (Config.CPU_Emu == 0) {
+		mval_y[M_TYP] = 0;
+	} else if (Config.CPU_Emu == 68000) {
+		mval_y[M_TYP] = 1;
+	} else if (Config.CPU_Emu == 68020) {
+		mval_y[M_TYP] = 2;
+	} else if (Config.CPU_Emu == 68030) {
+		mval_y[M_TYP] = 3;
+	} else {
+		mval_y[M_TYP] = 0;
+	}
+
 	mval_y[M_JOM] = Config.JoyOrMouse;
+
 	if (Config.FrameRate == 7) {
 		mval_y[M_FS] = 0;
 	} else if (Config.FrameRate == 8) {
@@ -390,19 +406,35 @@ static void menu_system(int32_t v)
 		SRAM_Clear();
 		WinX68k_Reset();
 		break;
-	case 5:
-		Config.CPU_Emu = 0; /*Select c68k Emulator*/
-		WinX68k_Reset();
-		break;
-	case 6:
-		Config.CPU_Emu = 1; /*Select Musashi Emulator*/
-		WinX68k_Reset();
-		break;
 	default:
 		break;
 	}
 	ScreenClearFlg=1;
 	mval_y[M_SYS] = 0;//メニュー選択をReset
+}
+
+static void menu_mpu_type(int32_t v)
+{
+	switch (v) {
+	case 0 :
+		Config.CPU_Emu = 0;  /*Select c68k 68000 Emulator*/
+		WinX68k_Reset();
+		break;
+	case 1:
+		Config.CPU_Emu = 68000; /*Select Musashi 68000 Emulator*/
+		break;
+	case 2:
+		Config.CPU_Emu = 68020; /*Select Musashi 68020 Emulator*/
+		break;
+	case 3:
+		Config.CPU_Emu = 68030; /*Select Musashi 68030 Emulator*/
+		break;
+	default:
+		Config.CPU_Emu = 0; /*Select c68k 68000 Emulator*/
+		break;
+	}
+	m68000_init();
+	WinX68k_Reset();
 }
 
 static void menu_joy_or_mouse(int32_t v)
@@ -871,6 +903,8 @@ int32_t WinUI_Menu(int32_t first)
 				if (mval_y[mkey_y] == 2) {
 					return WUM_EMU_QUIT;
 				}
+				return WUM_MENU_END;
+			} else if (!strcmp("MPU Emulator", menu_item_key[mkey_y])) {
 				return WUM_MENU_END;
 			} else if (!strcmp("MIDI Out", menu_item_key[mkey_y])) {
 				midOutChg(Config.MIDI_outPort, Config.MIDI_Bank);
