@@ -95,8 +95,8 @@ endif
 include version.txt
 
 ifeq "$(PLATFORM)" "Darwin"
-CC	 = clang -std=c17 -arch x86_64 -arch arm64
-CXX	 = clang++ -std=c++17 -arch x86_64 -arch arm64
+CC	 = clang -std=c17
+CXX	 = clang++ -std=c++17
 else
 CC	 = gcc
 CXX	 = g++
