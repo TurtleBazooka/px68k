@@ -53,25 +53,22 @@ void GVRAM_Init(void)
 
 void FASTCALL GVRAM_FastClear(void)
 {
-	uint32_t v, h;
-	v = ((CRTC_Regs[0x29]&4)?512:256);
-	h = ((CRTC_Regs[0x29]&3)?512:256);
+	uint32_t v = ((CRTC_Regs[0x29]&4)?512:256);// SIZE
+	uint32_t h = ((CRTC_Regs[0x29]&3)?512:256);// COL
 	// やっぱちゃんと範囲指定しないと変になるものもある（ダイナマイトデュークとか）
+	uint32_t offx = (GrphScrollX[0] & 0x1ff << 1);//  x2(byte)
+	uint32_t offy = (GrphScrollY[0] & 0x1ff) << 10;// x1024(line)
 	uint16_t *p;
-	uint32_t x, y;
-	uint32_t offx, offy;
+	uint32_t x, y, cp;
 
-	offy = (GrphScrollY[0] & 0x1ff) << 10;
 	for (y = 0; y < v; ++y) {
-		offx = GrphScrollX[0] & 0x1ff;
-		p = (uint16_t *)(GVRAM + offy + offx * 2);
-
+		cp = offy + (0x400 * y) + offx;
 		for (x = 0; x < h; ++x) {
-			*p++ &= CRTC_FastClrMask;
-			offx = (offx + 1) & 0x1ff;
+			cp &= 0x07fffe;//GVRAM area
+			p = (uint16_t *)(GVRAM + cp);
+			*p &= CRTC_FastClrMask;
+			cp+= 2;
 		}
-
-		offy = (offy + 0x400) & 0x7fc00;
 	}
 
 }
@@ -85,9 +82,9 @@ uint8_t FASTCALL GVRAM_Read(uint32_t adr)
 	uint8_t ret=0;
 	uint8_t page;
 	uint16_t *ram = (uint16_t *)(&GVRAM[adr&0x7fffe]);
-#ifndef __BIG_ENDIAN__
-	adr ^= 1;
-#endif
+
+	adr ^= 1;// M68000 is Big Endian
+
 	// GVRAM:0x0c00000 ~ 0x0dfffff
 	adr &= 0x3fffff;
 
@@ -150,9 +147,8 @@ void FASTCALL GVRAM_Write(uint32_t adr, uint8_t data)
 	uint16_t *ram = (uint16_t*)(&GVRAM[adr&0x7fffe]);
 	uint16_t temp;
 
-#ifndef __BIG_ENDIAN__
-	adr ^= 1;
-#endif
+	adr ^= 1;// M68000 is Big Endian
+
 	// GVRAM:0x0c00000 ~ 0x0dfffff
 	adr &= 0x3fffff;
 
