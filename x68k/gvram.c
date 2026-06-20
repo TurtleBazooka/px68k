@@ -53,10 +53,10 @@ void GVRAM_Init(void)
 
 void FASTCALL GVRAM_FastClear(void)
 {
-	uint32_t v = ((CRTC_Regs[0x29]&4)?512:256);// SIZE
+	uint32_t v = ((CRTC_Regs[0x29]&4)?512:256);// SIZ
 	uint32_t h = ((CRTC_Regs[0x29]&3)?512:256);// COL
 	// やっぱちゃんと範囲指定しないと変になるものもある（ダイナマイトデュークとか）
-	uint32_t offx = (GrphScrollX[0] & 0x1ff << 1);//  x2(byte)
+	uint32_t offx = (GrphScrollX[0] & 0x1ff) <<  1;// x2(byte)
 	uint32_t offy = (GrphScrollY[0] & 0x1ff) << 10;// x1024(line)
 	uint16_t *p;
 	uint32_t x, y, cp;
