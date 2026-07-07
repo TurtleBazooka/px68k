@@ -122,7 +122,7 @@ void SRAM_VirusCheck(void)
 	if (!Config.SRAMWarning) return;				// Warning発生モードでなければ帰る
 
 	if ( (cpu_readmem24_dword(0xed3f60)==0x60000002)
-	   &&(cpu_readmem24_dword(0xed0010)==0x00ed3f60) )		// 特定うぃるすにしか効かないよxAｷ
+	   &&(cpu_readmem24_dword(0xed0010)==0x00ed3f60) )		// 特定うぃるすにしか効かないよ
 	{
 #if 0 /* XXX */
 		int ret = MessageBox(hWndMain,

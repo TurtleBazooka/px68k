@@ -548,7 +548,7 @@ SCSI_ipl(void)
 		for(j=0; j<SCSI_BlockSize; j++){
 		  Memory_WriteB(0x02000+j,SCSI_Buf[j]);
 		}
-		if((Memory_ReadD(0x02000) != 0x58363853)||(Memory_ReadD(0x02001) != 0x43534931)){ /*check X68SCSI1*/
+		if((Memory_ReadD(0x02000) != 0x58363853)||(Memory_ReadD(0x02004) != 0x43534931)){ /*check X68SCSI1*/
 		 printf("0");return;
 		}
 	}
