@@ -282,20 +282,21 @@ void SetTimerControl(uint8_t data)
 {
 
 	if (data & 0x10){//Reset TimerA flag 
-		ResetStatus(1);
+		ResetStatus(0x01);
 	}
+
 	if (data & 0x20){//Reset TimerB Flag 
-		ResetStatus(2);
+		ResetStatus(0x02);
 	}
 
 
-	if ((TimerCntl & 0x01) == 0x00){//0→1 TimerA Start
+	if ((TimerCntl & 0x01) == 0x00){//0→1 edge TimerA Start
 		if (data & 0x01) {
 		  TimerA_count = TimerA;
 		}
 	}
 
-	if ((TimerCntl & 0x02) == 0x00){//0→1 TimerB Start
+	if ((TimerCntl & 0x02) == 0x00){//0→1 edge TimerB Start
 		if (data & 0x02) {
 		  TimerB_count = TimerB;
 		}
@@ -307,12 +308,12 @@ void SetTimerControl(uint8_t data)
 }
 
 // ===タイマー A 発生時イベント (CSM) ===
-void TimerA_CMS_event(void)
+void TimerA_CSM_event(void)
 {
-	if (TimerCntl & 0x80){ // CSM bit check
-		for (uint8_t i=0; i<8; i++){
-			write_chip(CHIP_YM2151, 0, (uint32_t)0x08, (uint8_t)(0x78 | i));//All slot Key-ON
-		}
+
+	for (uint8_t i=0; i<8; i++)
+	{
+		write_chip(CHIP_YM2151, 0, (uint32_t)0x08, (uint8_t)(0x78 | i));//All slot Key-ON
 	}
 
   return;
@@ -322,70 +323,39 @@ void TimerA_CMS_event(void)
 void Count(int32_t us)
 {
 
-	if(TimerCntl & 0x01){//TimerA Start?
+	if((TimerA != 0) && (TimerCntl & 0x01)){//TimerA Running?
 		TimerA_count -= us << 16;
 		if (TimerA_count <= 0){//OverFlow check
 
-			TimerA_CMS_event();
+		  if (TimerCntl & 0x80){ // CSM bit check
+			TimerA_CSM_event();
+		  }
 
-			TimerA_count = TimerA;
+		  while (TimerA_count < 0){
+			TimerA_count += TimerA;
+		  }
 
-			if (TimerCntl & 0x04){// IRQ flg check
+		  if (TimerCntl & 0x04){// IRQ flg check
 				SetStatus(0x01);
-			}
+		  }
 		}
 	}
 
-	if(TimerCntl & 0x02){//TimerB Start?
+	if((TimerB != 0) && (TimerCntl & 0x02)){//TimerB Running?
 		TimerB_count -= us << 12;
 		if (TimerB_count <= 0){//OverFlow check
 
-			TimerB_count = TimerB;
+		  while (TimerB_count < 0){
+			TimerB_count += TimerB;
+		  }
 
-			if (TimerCntl & 0x08){// IRQ flg check
-				SetStatus(0x02);
-			}
+		  if (TimerCntl & 0x08){// IRQ flg check
+			  SetStatus(0x02);
+		  }
 		}
 	}
 
 	return;
-}
-
-// === Write YM2151 ===
-void WriteIO(uint32_t reg, uint8_t data)
-{
-	uint16_t tmp;
-
-	if( reg & 1 ) {
-		write_chip(CHIP_YM2151, 0, (uint32_t)OPMReg, (uint8_t)data);//YMFM
-		switch (OPMReg & 0xff)
-		{
-		  case 0x10:		// CLKA0
-		  case 0x11:		// CLKA1
-		    TimerA_Reg[OPMReg & 0x01] = uint8_t(data);
-			tmp = (TimerA_Reg[0] << 2) | (TimerA_Reg[1] & 0x03);
-			TimerA = (1024-tmp) * timer_step;
-		    break;
-		  case 0x12:		// CLKB
-			TimerB = (256-data) * timer_step;
-		    break;
-		  case 0x14:		// CSM, TIMER
-		    SetTimerControl(data);
-		    break;
-		  case 0x1B:		// ADPCM clock & FDC Ready
-			::ADPCM_SetClock((data>>5) & 4);
-			::FDC_SetForceReady((data>>6) & 1);
-		    break;
-		  default:
-		    break;
-		}
-		TimerWait=(20.75 * 10);//20.75μs
-	} else {
-		OPMReg = data;
-		TimerWait=(4.24 * 10);//4.24μs
-	}
-
-  return;
 }
 
 // === OPM YM2151 Initialize ===
@@ -447,9 +417,9 @@ void OPM_Reset(void)
   return;
 }
 
-// === OPM YM2151 Read ===
+// === OPM YM2151 Read Status ===
 //[busy]-------[TimerB flag][TimerA flag]
-uint8_t FASTCALL OPM_Read(uint32_t adr)
+uint8_t FASTCALL OPM_Read(void)
 {
 	uint8_t ret = (status & 0x03);
 
@@ -462,7 +432,43 @@ uint8_t FASTCALL OPM_Read(uint32_t adr)
 // === OPM YM2151 Write ===
 void FASTCALL OPM_Write(uint32_t adr, uint8_t data)
 {
-	WriteIO(adr, data);
+	uint16_t tmp;
+
+	if( (adr & 0x01) == 0x00 ) {
+		OPMReg = data;
+		TimerWait=(4.24 * 10);//4.24μs
+	}
+
+	if( (adr & 0x01) == 0x01 ) {
+		write_chip(CHIP_YM2151, 0, (uint32_t)OPMReg, (uint8_t)data);//YMFM
+		switch (OPMReg & 0xff)// Timerは自前処理
+		{
+		  case 0x10:		// CLKA0
+		  case 0x11:		// CLKA1
+		    TimerA_Reg[OPMReg & 0x01] = uint8_t(data);
+			tmp = (uint16_t)((TimerA_Reg[0] << 2) | (TimerA_Reg[1] & 0x03)) & 0x03ff;
+			TimerA = (1024-tmp) * timer_step;
+		    break;
+		  case 0x12:		// CLKB
+			TimerB = (256-data) * timer_step;
+		    break;
+		  case 0x14:		// CSM, TIMER
+		    SetTimerControl(data);
+		    break;
+		  case 0x19:		// PMD, AMD
+		    // none
+		    break;
+		  case 0x1B:		// ADPCM clock & FDC Ready
+			::ADPCM_SetClock((data>>5) & 4);
+			::FDC_SetForceReady((data>>6) & 1);
+		    break;
+		  default:
+		    break;
+		}
+		TimerWait=(20.75 * 10);//20.75μs
+	}
+
+  return;
 }
 
 // === YM2151 Genarate Sound ===

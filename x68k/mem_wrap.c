@@ -336,22 +336,27 @@ wm_buserr(uint32_t addr, uint8_t val)
 static void 
 wm_opm(uint32_t addr, uint8_t val)
 {
-	uint8_t t;
+  uint8_t t = (uint8_t)(addr & 0x03);
+
+  switch(t){
+   case 0x01:// Reg set
+    OPM_Write(0, val);
+    break;
+   case 0x03:// Data
+    OPM_Write(1, val);
+    break;
+   default:
+    break;
+  }
+
 #ifdef RFMDRV
 	char buf[2];
-#endif
-
-	t = addr & 3;
-	if (t == 1) {
-		OPM_Write(0, val);
-	} else if (t == 3) {
-		OPM_Write(1, val);
-	}
-#ifdef RFMDRV
 	buf[0] = t;
 	buf[1] = val;
 	send(rfd_sock, buf, sizeof(buf), 0);
 #endif
+
+  return;
 }
 
 static void 
@@ -575,11 +580,12 @@ rm_nop(uint32_t addr)
 static uint8_t
 rm_opm(uint32_t addr)
 {
-
-	if ((addr & 3) == 3) {
-		return OPM_Read(0);
+	if ((addr & 0x03) == 0x03)
+	{
+		return OPM_Read();//status
 	}
-	return 0;
+
+	return 0xff;
 }
 
 static uint8_t

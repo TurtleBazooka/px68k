@@ -281,10 +281,10 @@ void SetTimerControl(uint8_t data)
 {
 
 	if (data & 0x10){//Reset TimerA flag 
-		ResetStatus(1);
+		ResetStatus(0x01);
 	}
 	if (data & 0x20){//Reset TimerB Flag 
-		ResetStatus(2);
+		ResetStatus(0x02);
 	}
 
 
@@ -306,12 +306,10 @@ void SetTimerControl(uint8_t data)
 }
 
 // ===タイマー A 発生時イベント (CSM) ===
-void TimerA_CMS_event(void)
+void TimerA_CSM_event(void)
 {
-	if (TimerCntl & 0x80){ // CSM bit check
-		for (uint8_t i=0; i<8; i++){
-			write_chip(CHIP_YM2151, 0, (uint32_t)0x08, (uint8_t)(0x78 | i));//All slot Key-ON
-		}
+	for (uint8_t i=0; i<8; i++){
+		write_chip(CHIP_YM2151, 0, (uint32_t)0x08, (uint8_t)(0x78 | i));//All slot Key-ON
 	}
 
   return;
@@ -321,29 +319,35 @@ void TimerA_CMS_event(void)
 void Count(int32_t us)
 {
 
-	if(TimerCntl & 0x01){//TimerA Start?
+	if((TimerA != 0) && (TimerCntl & 0x01)){//TimerA Start?
 		TimerA_count -= us << 16;
 		if (TimerA_count <= 0){//OverFlow check
 
-			TimerA_CMS_event();
+		  if (TimerCntl & 0x80){ // CSM bit check
+			TimerA_CSM_event();
+		  }
 
-			TimerA_count = TimerA;
+		  while (TimerA_count < 0){
+			TimerA_count += TimerA;
+		  }
 
-			if (TimerCntl & 0x04){// IRQ flg check
-				SetStatus(0x01);
-			}
+		  if (TimerCntl & 0x04){// IRQ flg check
+			SetStatus(0x01);
+		  }
 		}
 	}
 
-	if(TimerCntl & 0x02){//TimerB Start?
+	if((TimerB != 0) && (TimerCntl & 0x02)){//TimerB Start?
 		TimerB_count -= us << 12;
 		if (TimerB_count <= 0){//OverFlow check
 
-			TimerB_count = TimerB;
+		  while (TimerB_count < 0){
+			TimerB_count += TimerB;
+		  }
 
-			if (TimerCntl & 0x08){// IRQ flg check
-				SetStatus(0x02);
-			}
+		  if (TimerCntl & 0x08){// IRQ flg check
+			SetStatus(0x02);
+		  }
 		}
 	}
 
@@ -446,9 +450,9 @@ void OPM_Reset(void)
   return;
 }
 
-// === OPM YM2151 Read ===
+// === OPM YM2151 status Read ===
 //[busy]-------[TimerB flag][TimerA flag]
-uint8_t FASTCALL OPM_Read(uint32_t adr)
+uint8_t FASTCALL OPM_Read(void)
 {
 	uint8_t ret = (status & 0x03);
 

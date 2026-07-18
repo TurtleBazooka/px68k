@@ -128,10 +128,10 @@ void OPM_Reset(void)
 }
 
 
-uint8_t FASTCALL OPM_Read(uint16_t adr)
+uint8_t FASTCALL OPM_Read(void)
 {
 	uint8_t ret = 0;
-	(void)adr;
+
 	if ( opm ) ret = opm->ReadStatus();
 
 	return ret;

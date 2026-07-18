@@ -385,9 +385,9 @@ int32_t
 WinX68k_Init(void)
 {
 
-	IPL = (uint8_t*)malloc(0x40000 + 100);
-	MEM = (uint8_t*)malloc(0xc00000 + 100);
-	FONT = (uint8_t*)malloc(0xc0000 + 100);
+	IPL  = (uint8_t*)malloc(0x040000 + 100);
+	MEM  = (uint8_t*)malloc(0xc00000 + 100);
+	FONT = (uint8_t*)malloc(0x0c0000 + 100);
 
 	if (MEM){
 		memset(MEM, 0, 0xc00000);
