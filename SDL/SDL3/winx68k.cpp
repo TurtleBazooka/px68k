@@ -1143,6 +1143,10 @@ int main(int argc, char *argv[])
 			case SDL_EVENT_GAMEPAD_REMAPPED:
 				GamePad_Remapped(ev.gdevice.which);
 				break;
+			case SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION:
+			case SDL_EVENT_GAMEPAD_TOUCHPAD_UP:
+			case SDL_EVENT_GAMEPAD_UPDATE_COMPLETE:
+				break;
 			case SDL_EVENT_DROP_BEGIN:
 			case SDL_EVENT_DROP_COMPLETE:
 				break;

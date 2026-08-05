@@ -4,22 +4,18 @@ written by kameya  2021/11/23
 folder [macOS]
 build for double clickable aplication resource.
 
-sdl2.pc,sdl3.pc script put-in /usr/local/lib/pkgconfig folder.
-it's build with SDL2/3.Framework use with pkgconfig build system.
-
-this script for --lib, --cflags LINKER option, for LINK with FrameWork SDL2/3.
-
 How to build for mac.
 
+build for macOS/GNU/Linux/MinGW(win)
 $ make
-and...
+
+build for macOS
 $ make mac
 
-build for GNU/Linux/MinGW(win)
-$ make
+build for MinGW(win)
+$ make win
 
 joy for your Mac life!
-
 
 [日本語解説] by kameya
 Winにはxm6というスバらしいエミュがありますよね。
@@ -37,11 +33,12 @@ Framework版のSDL3をメインに、MacBookAir(2014)/Montereyで開発してい
 ・輝度変更はCRTみたいに徐々に残光しながら変化します。
 ・SDL1は削除(Discon)、SDL3推奨（SDL2も絶賛サポート中）
 ・SCSIのDiskImageサポート(*.HDSからBootできます。)
+・68000/20/30にCPUエミュレーションを変更可能
 ・MOイメージサポート(128/230/540/640MBの*.MOSをマウント可)
 ・MIDI演奏に対応(Win/Mac)　※Linuxは現状Fluidsynthのみ
 ・MIDI-INも一応対応(Win/Mac)
-・SoundはStreamingになります。(SDL3)
-・PrintOutをFileに出力
+・SDL3でのSoundはStreaming出力
+・PrintOutをFileに出力(.keropi内)
 ・USキーボードのサポート(keyconf.datを.keropiに入れてください)
 ・cgrom.tmpを自前生成可能(cgrom.datは公式からは配布されてない)
 ・ソフトキーボードサポート復活(Menu上で右クリック)
@@ -58,15 +55,13 @@ SDL3/2のFrameWorkを/Library/Frameworksに入れておいてください。
 cgrom.tmpを自前生成する場合はSDL3_ttf.frameworkも必要です。
 
 [コンパイル]
-% make
+% make YMFM=ON
 and..
-% make mac
+% make YMFM=ON mac
 
 または、
-% mkdir build
-% cd build
-% cmake ..
-% cmake --build .
+% cmake -S . -B build -D YMFM=ON
+% cmake --build build --config Release
 
 [cgrom.tmpの生成機能]
 配布されていないcgromをOSのTrueTypeから生成する場合は、
@@ -75,16 +70,28 @@ and..
 できあがったcgrom.tmpを.keropiに入れておいてください。
 
 [必要なIPL]
-iplrom.dat/iplromxv.dat　、　cgrom.dat/cgrom.tmp 、　scsiexrom.dat
-を.keropiに入れておいてください。
-
-[GameController対応]
-SDL2のGameController対応は、対応したGamePad記述のあるgamecontrollerdb.txt
+iplrom.dat/iplromxv.dat/iplromco.dat/iplrom30.dat　、cgrom.dat/cgrom.tmp 、scsiexrom.dat
 を.keropiに入れておいてください。
 
 [GamePad対応]
-SDL3のGamePad対応はSDL2のgamecontrollerdb.txt　を　gamepaddb.txt にCOPYし、
-Mac OS X を　macOS に全置換して、同じく.keropiに入れておいてください。
+たいていのGamePadには標準対応してるハズです。
+非対応GamePadを追加する場合、SDL3ではgamepaddb.txt に追加したものを
+platformをmacOS にして、.keropiに入れておいてください。
+
+[GameController対応]
+SDL2のGameController追加対応は、対応したGamePad記述のあるgamecontrollerdb.txt
+を同じく.keropiに入れておいてください。
+
+[SCSI Disk imageの作成] (*.HDS)
+まず空のFileを作ります。(例：200MB)
+(MacならDiskUtilitiesでdmg作って*.HDSにリネームするのが簡単)
+$ dd if=/dev/zero of=TEST.HDS bs=1m count=200
+
+px68k.sdl3 をHuman68k 3.02から起動し、HDD0にTEST.HDSを割り当てます。
+Human68kから、`format` `SCSI装置` `0 ハードディスク 199Mバイト` `装置初期化` `Y`
+`領域確保` `容量 199` `ボリューム名 hoge` `システム転送 する` `実行` `Y`
+`終了` `Y`　でHumanに戻ってきます。
+A>copyall a:¥*.* c:　とやってSystemを転送すれば起動可能になります。
 
 欠点もたくさんあります。
 動作実績のあったAndroid/iPhoneでの動作確認はしていません。
