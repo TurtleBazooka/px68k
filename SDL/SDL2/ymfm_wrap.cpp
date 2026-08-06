@@ -457,7 +457,11 @@ uint8_t FASTCALL OPM_Read(void)
 	uint8_t ret = (status & 0x03);
 
 	// 0x80:Write Busy(Addr:4.25μs/data:20.75μs)
-	if (TimerWait > 0)  ret |= 0x80;
+	if (TimerWait > 0)
+	{
+	 ret |= 0x80;
+	 TimerWait = 0;
+	}
 
 	return ret;
 }
