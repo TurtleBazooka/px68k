@@ -338,12 +338,12 @@ void FASTCALL CRTC_Write16(uint32_t adr, uint16_t data, uint8_t ulds)
 				CRTC_VStep = 2;
 			WinDraw_ChangeSize();
 			break;
-		case 0x28:
-			CRTC_Regs[0x28] &= 0x07;
+		case 0x28://R20
+			CRTC_Regs[0x28] &= 0x1f;//T-MEM G-MEM SIZE COL
 			TVRAM_SetAllDirty();
 			//break;
 		case 0x29:
-			CRTC_Regs[0x29] &= 0x1f;
+			CRTC_Regs[0x29] &= 0x1f;// HF VD HD
 			HSYNC_CLK = ((CRTC_Regs[0x29]&0x10)?VSYNC_HIGH:VSYNC_NORM)/VLINE_TOTAL;
 			VID_MODE = !!(CRTC_Regs[0x29]&0x10);
 			if(CRTC_VEND>CRTC_VSTART){ TextDotY = CRTC_VEND-CRTC_VSTART; }//設定途中対策

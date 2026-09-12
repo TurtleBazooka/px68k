@@ -163,6 +163,8 @@ WinDraw_InitWindowSize(uint32_t ScreenX, uint32_t ScreenY, uint32_t StartX, uint
 	SDL_RenderClear(sdl_render);/*screen buffer clear*/
 
 	switch(ScreenX){
+	  case 1000 ... 1200: //====1024x1024/512====
+	   break;
 	  case 513 ... 900: //====768x512/256   640x480/400/240/200====
 		 switch(ScreenY){
 		 case 257 ... 600:
@@ -209,6 +211,8 @@ WinDraw_InitWindowSize(uint32_t ScreenX, uint32_t ScreenY, uint32_t StartX, uint
 		   drawH=StartY-20;
 		   break;
 		}
+	   break;
+	  default:
 	   break;
 	}
 

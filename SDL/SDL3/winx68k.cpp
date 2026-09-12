@@ -913,6 +913,8 @@ int main(int argc, char *argv[])
 					if(ev.window.windowID == SDL_GetWindowID(sdl_window)){ goto end_loop; }
 					if(ev.window.windowID == SDL_GetWindowID(sft_kbd_window)){ Soft_kbd_Show(0); }//消す
 			break;
+			case SDL_EVENT_WINDOW_FOCUS_GAINED:
+				break;
 			case SDL_EVENT_MOUSE_BUTTON_DOWN:
 				if(ev.button.button == SDL_BUTTON_LEFT){//左ボタンを押した
 				 if(ev.window.windowID == SDL_GetWindowID(sft_kbd_window)){//SoftKey Window

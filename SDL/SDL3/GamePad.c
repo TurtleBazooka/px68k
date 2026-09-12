@@ -459,17 +459,23 @@ void FASTCALL GamePadAxis_Update(int32_t which, uint8_t axis, int32_t value)
 	uint8_t value8 = value + 128;// 0~255に正規化
 
 	switch(axis){
-	case SDL_GAMEPAD_AXIS_LEFTY:
+	case SDL_GAMEPAD_AXIS_LEFTY://Y軸
 	  CyberST[2] = 0x90 | (0x0f & (value8 >> 4));
 	  CyberST[6] = 0x90 | (0x0f & value8 );
 	  break;
-	case SDL_GAMEPAD_AXIS_LEFTX:
+	case SDL_GAMEPAD_AXIS_LEFTX://X軸
 	  CyberST[3] = 0xb0 | (0x0f & (value8 >> 4));
 	  CyberST[7] = 0xb0 | (0x0f & value8 );
 	  break;
-	case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
+	case SDL_GAMEPAD_AXIS_LEFT_TRIGGER://Z軸
 	  CyberST[4] = 0x90 | (0x0f & (value8 >> 4));
 	  CyberST[8] = 0x90 | (0x0f & value8 );
+	  break;
+	// not use
+	case SDL_GAMEPAD_AXIS_RIGHTX:
+	case SDL_GAMEPAD_AXIS_RIGHTY:
+	case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
+	default:
 	  break;
 	}
 	/*固定値*/
@@ -537,6 +543,8 @@ void FASTCALL GamePadButton_Update(int32_t which, uint8_t button, uint8_t on )
 	  break;
 	case SDL_GAMEPAD_BUTTON_GUIDE:// Menu in
 	  if(on){  JoyDownState0 = (JOY_HOME ^ 0xff); }
+	  break;
+	default:
 	  break;
 	}
 
