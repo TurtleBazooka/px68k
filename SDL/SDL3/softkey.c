@@ -33,7 +33,7 @@ void Soft_kbd_CreateScreen(void)
 							SDL_TEXTUREACCESS_STREAMING, softkey_width, softkey_hight);
 	SDL_SetRenderTarget(sft_kbd_render, sft_kbd_texture);
 
-	keydraw_buffer = SDL_CreateSurface( 800, 220,SDL_PIXELFORMAT_RGBX8888);//描画用
+	keydraw_buffer = SDL_CreateSurface( softkey_width, softkey_hight,SDL_PIXELFORMAT_RGBX8888);//描画用
 
  return;
 }
@@ -147,7 +147,7 @@ void draw_soft_kbd(uint32_t ms_x,uint32_t ms_y, uint8_t keyboardLED)
 		// KeyTop Charactor
 		x=kbd_key[i].x + (kbd_key[i].w-softkey_fontsize)/2 - (((int32_t)strlen(kbd_key[i].s)-1)*2);
 		y=kbd_key[i].y + (kbd_key[i].h-softkey_fontsize)/2 - 1;
-		set_sbp(keydraw_buffer->pixels);//描画準備
+		set_sbp(keydraw_buffer->pixels, keydraw_buffer->w);//描画準備
 		set_mfs(softkey_fontsize);
 		if(strlen(kbd_key[i].s2) == 0){
 		 set_mlocate(x,y);
@@ -159,7 +159,7 @@ void draw_soft_kbd(uint32_t ms_x,uint32_t ms_y, uint8_t keyboardLED)
 		 set_mlocate(x+5,y+5);
 		 draw_str(kbd_key[i].s2,1);
 		}
-		set_sbp((uint32_t *)(menu_surface->pixels));//元に戻す
+		set_sbp((uint32_t *)(menu_surface->pixels), menu_surface->w);//元に戻す
 		set_mfs(24);
 	}
 
@@ -175,14 +175,21 @@ void draw_soft_kbd(uint32_t ms_x,uint32_t ms_y, uint8_t keyboardLED)
 	 y >>= 1;
 	}
 
+	// Drawbuff to Texture
+	void *dst_pixels,*src_pixels;
+	int   pitch;
+	if (TRUE == SDL_LockTexture(sft_kbd_texture, NULL, &dst_pixels, &pitch)) {// lock texture
+	  memcpy(dst_pixels, keydraw_buffer->pixels, keydraw_buffer->pitch * keydraw_buffer->h );
+	  SDL_UnlockTexture(sft_kbd_texture);// unlock texture
+	}
+
 	// 描画結果を画面に表示(SDL3)
-	SDL_UpdateTexture(sft_kbd_texture, NULL,keydraw_buffer->pixels, keydraw_buffer->pitch );
 	SDL_RenderTexture(sft_kbd_render, sft_kbd_texture, NULL, NULL);
 	SDL_RenderPresent(sft_kbd_render);
 
 	 // 元に戻す(念のため)
 	set_mfs(24);
-	set_sbp((uint32_t *)(menu_surface->pixels));
+	set_sbp((uint32_t *)(menu_surface->pixels), menu_surface->w);
 
   return;
 }

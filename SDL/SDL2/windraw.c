@@ -604,17 +604,19 @@ void
 Update_Screen(uint32_t menu)
 {
 	SDL_Rect x68rect, CRTrect;
+	void *dst_pixels,*src_pixels;
+	int   pitch;
 
 	/*surface(Main mem.) → texture(Frame buff.) */
 	if(menu){
-	  SDL_UpdateTexture(sdl_texture, NULL, menu_surface->pixels, menu_surface->pitch);//32bit depth
+	  src_pixels = menu_surface->pixels;// 転送元＝menu画面
 	  x68rect.x = CRTrect.x = 0;
 	  x68rect.y = CRTrect.y = 0;
 	  x68rect.w = CRTrect.w = 800;
 	  x68rect.h = CRTrect.h = 600;
 	}
 	else{
-	  SDL_UpdateTexture(sdl_texture, NULL, sdl_x68screen->pixels, sdl_x68screen->pitch);//32bit depth
+	  src_pixels = sdl_x68screen->pixels;// 転送元=X68画面
 	  /*texture → renderer copy rect */
 	  x68rect.x = 0;
 	  x68rect.y = 0;
@@ -625,6 +627,12 @@ Update_Screen(uint32_t menu)
 	  CRTrect.w = (800*TextDotX/surfaceW);
 	  CRTrect.h = (600*TextDotY/surfaceH);
 	}
+
+	// Transfer buffer to texture
+	  if (0 == SDL_LockTexture(sdl_texture, NULL, &dst_pixels, &pitch)) {// lock texture
+		memcpy(dst_pixels, src_pixels, pitch * 600);
+		SDL_UnlockTexture(sdl_texture);// unlock texture
+	  }
 
 	// Render Clear every time
 	  SDL_SetRenderDrawColor(sdl_render, 0, 0, 0, 0);	/* select color (black) */
@@ -1460,7 +1468,8 @@ void WinDraw_DrawLine(void)
 
 struct _px68k_menu {
 	uint32_t *sbp;  // surface buffer ptr
-	uint32_t *mlp; // menu locate ptr
+	uint32_t w;     // surface buffer width
+	uint32_t *mlp;  // menu locate ptr
 	uint32_t mcolor; // color of chars to write
 	uint32_t mbcolor; // back ground color of chars to write
 	int32_t ml_x;
@@ -1607,9 +1616,10 @@ static void set_mlocateC(int32_t x, int32_t y)
 	p6m.ml_x = x * p6m.mfs / 2, p6m.ml_y = y * p6m.mfs;
 }
 
-static void set_sbp(uint32_t *p)
+static void set_sbp(uint32_t *p, uint32_t width)
 {
 	p6m.sbp = p;
+	p6m.w   = width;
 }
 
 // menu font size (16 or 24)
@@ -1618,9 +1628,9 @@ static void set_mfs(int32_t fs)
 	p6m.mfs = fs;
 }
 
-static uint32_t *get_ml_ptr()
+static uint32_t *get_ml_ptr(uint32_t line)
 {
-	p6m.mlp = p6m.sbp + MENU_WIDTH * p6m.ml_y + p6m.ml_x;
+	p6m.mlp = p6m.sbp + (p6m.w * (p6m.ml_y + line)) + p6m.ml_x;
 	return p6m.mlp;
 }
 
@@ -1653,9 +1663,6 @@ static void draw_char(uint16_t sjis)
 	  }
 	}
 
-	/*draw pointer*/
-	p = get_ml_ptr();
-
 	/*Font data address*/
 	result = get_font_addr(sjis, h, &f);
 	if ((result == FALSE) || (f > 0x0c0000)){
@@ -1666,6 +1673,7 @@ static void draw_char(uint16_t sjis)
 	w = (h == 8)? 8 : (isHankaku(sjis >> 8)? h / 2 : h);
 
 	for (i = 0; i < h; i++) {
+		p = get_ml_ptr(i); /*draw pointer*/
 		wc = w;
 		for (j = 0; j < ((w % 8 == 0)? w / 8 : w / 8 + 1); j++) {
 			c = Memory_ReadB(f + 0xf00000);/*FONT-ROM*/
@@ -1680,7 +1688,7 @@ static void draw_char(uint16_t sjis)
 					break;
 			}
 		}
-		p = p + MENU_WIDTH - w;
+
 	}
 
 	p6m.ml_x += w;
@@ -1738,7 +1746,7 @@ int32_t WinDraw_MenuInit(void)
 	if (menu_buffer == NULL) {
 		return FALSE;
 	}
-	set_sbp(menu_buffer);
+	set_sbp(menu_buffer, 600);
 	set_mfs(24);
 #else
 
@@ -1747,7 +1755,7 @@ int32_t WinDraw_MenuInit(void)
 
 	if (!menu_surface)
 		return FALSE;
-	set_sbp((uint32_t *)(menu_surface->pixels));
+	set_sbp((uint32_t *)(menu_surface->pixels), menu_surface->w);
 	set_mfs(24);
 #endif
 
@@ -1811,7 +1819,7 @@ void WinDraw_DrawMenu(int32_t menu_state, int32_t mkey_pos, int32_t mkey_y, int3
 
 // ソフトウェアキーボード描画時にset_sbp(kbd_buffer)されているので戻す
 #if defined(USE_OGLES20)
-	set_sbp(menu_buffer);
+	set_sbp(menu_buffer,600);
 #endif
 // ソフトウェアキーボード描画時にset_mfs(16)されているので戻す
 #if defined(ANDROID) || TARGET_OS_IPHONE
@@ -2108,7 +2116,7 @@ static void draw_kbd_to_tex()
 	kbd_key[101].s = hi;
 	kbd_key[108].s = zen;
 
-	set_sbp(kbd_buffer);
+	set_sbp(kbd_buffer, KBDBUF_WIDTH);
 	set_mfs(KBD_FS);
 	set_mbcolor(0);
 	set_mcolor(0);

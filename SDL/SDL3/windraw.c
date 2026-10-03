@@ -163,7 +163,21 @@ WinDraw_InitWindowSize(uint32_t ScreenX, uint32_t ScreenY, uint32_t StartX, uint
 	SDL_RenderClear(sdl_render);/*screen buffer clear*/
 
 	switch(ScreenX){
-	  case 1000 ... 1200: //====1024x1024/512====
+	  case 1000 ... 1200: //====1024x1024/512/256====
+		 switch(ScreenY){
+		 case 800 ... 1200:
+		   surfaceW=ScreenX; drawW=StartX-272;
+		   surfaceH=ScreenY; drawH=StartY-80;
+		  break;
+		 case 257 ... 600:
+		   surfaceW=ScreenX; drawW=StartX-272;
+		   surfaceH=ScreenY; drawH=StartY-40;
+		  break;
+		 case 000 ... 256:
+		   surfaceW=ScreenX; drawW=StartX-272;
+		   surfaceH=ScreenY; drawH=StartY-20;
+		  break;
+		 }
 	   break;
 	  case 513 ... 900: //====768x512/256   640x480/400/240/200====
 		 switch(ScreenY){
@@ -576,17 +590,19 @@ void
 Update_Screen(uint32_t menu)
 {
 	SDL_FRect x68rect, CRTrect;
+	void *dst_pixels,*src_pixels;
+	int   pitch;
 
 	/*surface(Main mem.) → texture(Frame buff.) */
 	if(menu){
-	  SDL_UpdateTexture(sdl_texture, NULL, menu_surface->pixels, menu_surface->pitch);//32bit depth
+	  src_pixels = menu_surface->pixels;// 転送元＝menu画面
 	  x68rect.x = CRTrect.x = 0;
 	  x68rect.y = CRTrect.y = 0;
 	  x68rect.w = CRTrect.w = 800;
 	  x68rect.h = CRTrect.h = 600;
 	}
 	else{
-	  SDL_UpdateTexture(sdl_texture, NULL, sdl_x68screen->pixels, sdl_x68screen->pitch);//32bit depth
+	  src_pixels = sdl_x68screen->pixels;// 転送元=X68画面
 	  /*texture → renderer copy rect */
 	  x68rect.x = 0;
 	  x68rect.y = 0;
@@ -597,6 +613,12 @@ Update_Screen(uint32_t menu)
 	  CRTrect.w = (800*TextDotX/surfaceW);
 	  CRTrect.h = (600*TextDotY/surfaceH);
 	}
+
+	// Transfer buffer to texture
+	  if (TRUE == SDL_LockTexture(sdl_texture, NULL, &dst_pixels, &pitch)) {// lock texture
+		memcpy(dst_pixels, src_pixels, pitch * sdl_texture->h);
+		SDL_UnlockTexture(sdl_texture);// unlock texture
+	  }
 
 	// Render Clear every time
 	  SDL_SetRenderDrawColor(sdl_render, 0, 0, 0, 0);	/* select color (black) */

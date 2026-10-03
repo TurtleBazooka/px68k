@@ -69,7 +69,8 @@ int32_t scr_type = x68k;
 
 struct _px68k_menu {
 	uint32_t *sbp;  // surface buffer ptr
-	uint32_t *mlp; // menu locate ptr
+	uint32_t w;     // surface buffer width
+	uint32_t *mlp;  // menu locate ptr
 	uint32_t mcolor; // color of chars to write
 	uint32_t mbcolor; // back ground color of chars to write
 	int32_t ml_x;
@@ -212,9 +213,10 @@ static void set_mlocateC(int32_t x, int32_t y)
 	p6m.ml_x = x * p6m.mfs / 2, p6m.ml_y = y * p6m.mfs;
 }
 
-static void set_sbp(uint32_t *p)
+static void set_sbp(uint32_t *p, uint32_t width)
 {
 	p6m.sbp = p;
+	p6m.w   = width;
 }
 
 // menu font size (16 or 24)
@@ -223,9 +225,9 @@ static void set_mfs(int32_t fs)
 	p6m.mfs = fs;
 }
 
-static uint32_t *get_ml_ptr()
+static uint32_t *get_ml_ptr(uint32_t line)
 {
-	p6m.mlp = p6m.sbp + MENU_WIDTH * p6m.ml_y + p6m.ml_x;
+	p6m.mlp = p6m.sbp + (p6m.w * (p6m.ml_y + line)) + p6m.ml_x;
 	return p6m.mlp;
 }
 
@@ -242,9 +244,6 @@ static void draw_char(uint16_t sjis)
 	// char High 
 	h = p6m.mfs;
 
-	// get draw pointer
-	p = get_ml_ptr();
-
 	// get Font ROM address
 	if(get_font_addr(sjis, h, &fnt_ad) == FALSE) return;
 	fnt_ad |= 0xf00000; // X68000 font area
@@ -254,6 +253,7 @@ static void draw_char(uint16_t sjis)
 
 	// Drawing char
 	for (i = 0; i < h; i++) {
+	 p = get_ml_ptr(i); // get draw pointer
 	 if(w/4 > 1){// 8x8 8x16 12x12 12x24 16x16 24x24
 	   c32  = Memory_ReadB(fnt_ad) << 24;
 	   fnt_ad++;
@@ -271,7 +271,7 @@ static void draw_char(uint16_t sjis)
 	  else if(p6m.mbcolor) *(p+k) = p6m.mbcolor;
 	  c32 <<= 1;
 	 }
-	 p = p + MENU_WIDTH;
+
 	}
 
 	p6m.ml_x += w;// 次の描画位置
@@ -329,7 +329,7 @@ int32_t WinDraw_MenuInit(void)
 	if (menu_buffer == NULL) {
 		return FALSE;
 	}
-	set_sbp(menu_buffer);
+	set_sbp(menu_buffer, 600);
 	set_mfs(24);
 #else
 
@@ -339,7 +339,7 @@ int32_t WinDraw_MenuInit(void)
 
 	if (!menu_surface)
 		return FALSE;
-	set_sbp((uint32_t *)(menu_surface->pixels));
+	set_sbp((uint32_t *)(menu_surface->pixels), menu_surface->w);
 	set_mfs(24);
 #endif
 
@@ -401,7 +401,7 @@ void WinDraw_DrawMenu(int32_t menu_state, int32_t mkey_pos, int32_t mkey_y, int3
 
 // ソフトウェアキーボード描画時にset_sbp(kbd_buffer)されているので戻す
 #if defined(USE_OGLES20)
-	set_sbp(menu_buffer);
+	set_sbp(menu_buffer, 600);
 #endif
 // ソフトウェアキーボード描画時にset_mfs(16)されているので戻す
 #if defined(ANDROID) || TARGET_OS_IPHONE
