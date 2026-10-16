@@ -101,23 +101,22 @@ struct internal_file {
         ptrtohandle(h)->type : (((struct internal_handle *)(h))->type))
 
 
-/* for POSIX Kernel Time 1μs/unit */
-uint32_t
-Get_usecCount(void)
+/* for POSIX Kernel Time 1ns/unit */
+uint64_t
+Get_nsecCount(void)
 {
-#define	USEC_PER_SEC	1000000
-#define	NSEC_PER_USEC	1000
+#define	NSEC_PER_SEC	1000000000
 
   struct timespec ts;
 
   clock_gettime(CLOCK_MONOTONIC, &ts);
-  uint64_t boottime_usec = (ts.tv_sec * USEC_PER_SEC) + (ts.tv_nsec / NSEC_PER_USEC);
-  return((uint32_t)(boottime_usec & 0xffffffff));
+  uint64_t boottime_nsec = (ts.tv_sec * NSEC_PER_SEC) + (ts.tv_nsec);
+  return(boottime_nsec);
 
 }
 
 /* for WIN-API compatible ms単位/49日周期 */
-uint32_t
+uint64_t
 Get_msecCount(void)
 {
 #define	MSEC_PER_SEC	1000
@@ -127,7 +126,7 @@ Get_msecCount(void)
 
   clock_gettime(CLOCK_MONOTONIC, &ts);
   uint64_t boottime_msec = (ts.tv_sec * MSEC_PER_SEC) + (ts.tv_nsec / NSEC_PER_MSEC);
-  return((uint32_t)(boottime_msec & 0xffffffff));
+  return(boottime_msec);
 }
 
 BOOL

@@ -7,27 +7,27 @@
 #include "mfp.h"
 #include "winx68k.h"
 
-uint32_t	timercnt = 0;
-uint32_t	tick = 0;
+uint64_t	timercnt = 0;
+uint64_t	tick = 0;
 
 void Timer_Init(void)
 {
-	tick = Get_usecCount();
+	tick = Get_nsecCount();
 }
 
 void Timer_Reset(void)
 {
-	tick = Get_usecCount();
+	tick = Get_nsecCount();
 }
 
 uint16_t Timer_GetCount(void)
 {
-	uint32_t ticknow = Get_usecCount();//1μs単位
-	uint32_t dif;
+	uint64_t ticknow = Get_nsecCount();//1ns単位
+	uint64_t dif;
 	if(ticknow>=tick){dif = ticknow-tick; }
-	else{dif = 0xffffffff-tick+ticknow;}//補正
+	else{dif = UINT64_MAX-tick+ticknow;}//補正
 
-	uint32_t TIMEBASE;
+	uint64_t TIMEBASE;
 	if(CRTC_Regs[0x29]&0x10){
 	  TIMEBASE = VSYNC_HIGH * 567 / VLINE_TOTAL;//HSYNC:31KHz
 	}
@@ -38,7 +38,7 @@ uint16_t Timer_GetCount(void)
 	  TIMEBASE = ((CRTC_Regs[0x29]&0x10)?VSYNC_HIGH:VSYNC_NORM);
 	}
 
-	timercnt += dif*10;//0.1μs単位
+	timercnt += dif/100;//100ns単位
 	tick = ticknow;
 	if ( timercnt>=TIMEBASE ) {
 //		timercnt = 0;

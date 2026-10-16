@@ -431,7 +431,7 @@ void WinX68k_Exec(void)
 	//char *test = NULL;
 	int32_t clk_total, clkdiv, usedclk, hsync, clk_next, clk_count, clk_line=0;
 	int32_t KeyIntCnt = 0, MouseIntCnt = 0;
-	uint32_t t_start = timeGetTime(), t_end;
+	uint64_t t_start = Get_msecCount(), t_end;
 
 	if ( Config.FrameRate != 7 ) {
 		DispFrame = (DispFrame+1)%Config.FrameRate;
@@ -578,8 +578,8 @@ void WinX68k_Exec(void)
 		WinDraw_Draw();
 	TimerICount += clk_total;
 
-	t_end = timeGetTime();
-	if ( (int32_t)(t_end-t_start)>((CRTC_Regs[0x29]&0x10)?14:16) ) {
+	t_end = Get_msecCount();
+	if ( (int64_t)(t_end-t_start)>((CRTC_Regs[0x29]&0x10)?14:16) ) {
 		FrameSkipQueue += ((t_end-t_start)/((CRTC_Regs[0x29]&0x10)?14:16))+1;
 		if ( FrameSkipQueue>100 )
 			FrameSkipQueue = 100;
@@ -1040,12 +1040,12 @@ int main(int argc, char *argv[])
 #endif
 			case SDL_KEYDOWN:
 #if defined(ANDROID) || TARGET_OS_IPHONE
-				static uint32_t bef = 0;
-				uint32_t now;
+				static uint64_t bef = 0;
+				uint64_t now;
 				switch (ev.key.keysym.sym) {
 				case SDLK_AC_BACK:
-					now = timeGetTime();
-					if (now - bef < 1000) {
+					now = Get_msecCount();
+					if ((now - bef) < 1000) {
 						goto end_loop;
 					}
 					bef = now;

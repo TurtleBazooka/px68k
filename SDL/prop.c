@@ -145,7 +145,11 @@ set_modulepath(char *path, size_t len)
 	FILE *fp;
 
 	p6dir_buf[0] = '\0';
-	extpath = SDL_AndroidGetExternalStoragePath();
+#ifndef SDL2
+ 	extpath = SDL_GetAndroidExternalStoragePath();//for SDL3
+#else
+	extpath = SDL_AndroidGetExternalStoragePath();//for SDL2
+#endif
 	p6logd("extpath:%s", extpath);
 
 	// get the Android external path (.ex /storage/emulated/0)

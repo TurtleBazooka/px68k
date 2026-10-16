@@ -134,13 +134,6 @@ typedef	void *		DRAWITEMSTRUCT;
 #define	FILE_CURRENT		1
 #define	FILE_END			2
 
-
-/*
- * replace
- */
-#define	timeGetTime()		Get_msecCount()
-
-
 /*
  * prototype
  */

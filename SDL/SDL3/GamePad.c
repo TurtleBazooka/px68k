@@ -182,7 +182,7 @@ uint8_t Joystick_get_vbtn_state(uint16_t n)
 SDL_Gamepad *sdl_gamepad;
 static SDL_JoystickID GamePadID[10];//menu-instanceID格納用
 static const char No_GamePad[] = "No device found";
-static uint32_t	cyber_tick = 0;//時間計測用
+static uint64_t	cyber_tick = 0;//時間計測用
 
 void GamePad_Open(void)//未使用
 {
@@ -356,11 +356,11 @@ uint8_t FASTCALL GamePad_Read(uint8_t num)
 		switch(CyberTRX){
 		 case 0:
 		  ret = 0x9f | CyberACK;//set ACK=H
-		  uint32_t ticknow = Get_usecCount();//1μs単位
-		  uint32_t dif;
+		  uint64_t ticknow = Get_nsecCount();//1ns単位
+		  uint64_t dif;
 		  if(ticknow>=cyber_tick){dif = ticknow-cyber_tick; }
-		  else{dif = 0xffffffff-cyber_tick+ticknow;}//補正
-		  if(dif>40){
+		  else{dif = UINT64_MAX-cyber_tick+ticknow;}//補正
+		  if(dif>40000){//40μs(40000ns)
 		    CyberTRX++;
 		  }
 		  break;
@@ -432,7 +432,7 @@ void FASTCALL GamePad_Write(uint8_t num, uint8_t data)
 		  CyberCount =0;
 		  CyberState = 0;
 		  CyberTRX = 0;
-		  cyber_tick = Get_usecCount();//1μs単位
+		  cyber_tick = Get_nsecCount();//1ns単位
 		}
 	}
 

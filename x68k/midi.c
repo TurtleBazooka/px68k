@@ -84,7 +84,7 @@ static uint8_t MIDI_ResetType[5] = {		// Config.MIDI_Type に合わせて…
 };
 
 typedef struct {
-	uint32_t time;
+	uint64_t time;
 	uint8_t msg;
 } DELAYBUFITEM;
 
@@ -618,7 +618,7 @@ static void AddDelayBuf(uint8_t msg)
 {
 	int32_t newptr = (DBufPtrW+1)%MIDIDELAYBUF;
 	if ( newptr!=DBufPtrR ) {
-		DelayBuf[DBufPtrW].time = timeGetTime();
+		DelayBuf[DBufPtrW].time = Get_msecCount();
 		DelayBuf[DBufPtrW].msg  = msg;
 		DBufPtrW = newptr;
 	}
@@ -627,7 +627,7 @@ static void AddDelayBuf(uint8_t msg)
 
 void MIDI_DelayOut(uint32_t delay)
 {
-	uint32_t t = timeGetTime();
+	uint64_t t = Get_msecCount();
 	while ( DBufPtrW!=DBufPtrR ) {
 		if ( (t-DelayBuf[DBufPtrR].time)>=delay ) {
 			midi_data_out(DelayBuf[DBufPtrR].msg);

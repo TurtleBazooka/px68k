@@ -7,8 +7,8 @@
 extern "C" {
 #endif
 
-uint32_t	Get_usecCount(void);
-uint32_t	Get_msecCount(void);
+uint64_t	Get_nsecCount(void);
+uint64_t	Get_msecCount(void);
 
 BOOL	ReadFile(void*, void*, uint32_t, uint32_t*, LPOVERLAPPED);
 BOOL	WriteFile(void*, const void* , uint32_t, uint32_t*, LPOVERLAPPED);
