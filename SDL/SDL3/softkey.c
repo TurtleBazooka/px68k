@@ -59,7 +59,9 @@ extern void draw_soft_kbd(uint32_t ms_x,uint32_t ms_y, uint8_t keyboardLED);
 	draw_soft_kbd(1,1,keyLED);//Redraw
   }
   if(flg == 2){
-	SDL_SetWindowPosition(sft_kbd_window, winx+16, winy+430);
+	int softkey_x,softkey_y;
+	SDL_GetWindowPosition(sdl_window,&softkey_x,&softkey_y);
+	SDL_SetWindowPosition(sft_kbd_window, softkey_x+16, softkey_y+430);
   }
   sleep_counter = 0;
   return;

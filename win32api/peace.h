@@ -10,6 +10,10 @@ extern "C" {
 uint64_t	Get_nsecCount(void);
 uint64_t	Get_msecCount(void);
 
+void * File_Load(char* filename,size_t* size);
+BOOL   File_Save(char* filename,void* dp, size_t size);
+void   File_Free(void* fp);
+
 BOOL	ReadFile(void*, void*, uint32_t, uint32_t*, LPOVERLAPPED);
 BOOL	WriteFile(void*, const void* , uint32_t, uint32_t*, LPOVERLAPPED);
 void*	CreateFile(const char*, uint32_t, uint32_t, LPSECURITY_ATTRIBUTES,
@@ -28,10 +32,6 @@ HGLOBAL	GlobalFree(HGLOBAL);
 void*	GlobalLock(HGLOBAL);
 BOOL	GlobalUnlock(HGLOBAL);
 HGLOBAL	GlobalHandle(const void* p);
-
-uint32_t	GetPrivateProfileString(const char*, const char*, const char*, char*,
-		uint32_t, const char*);
-uint32_t	GetPrivateProfileInt(const char*, const char*, int32_t, const char*);
 
 #ifdef __cplusplus
 };

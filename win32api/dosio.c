@@ -38,20 +38,6 @@
 static char		curpath[MAX_PATH+32] = "";
 static char*	curfilep = curpath;
 
-void
-dosio_init(void)
-{
-
-	/* Nothing to do. */
-}
-
-void
-dosio_term(void)
-{
-
-	/* Nothing to do. */
-}
-
 /* ファイル操作 */
 FILEH
 File_Open(char* filename)

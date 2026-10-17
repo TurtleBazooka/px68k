@@ -43,9 +43,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-							// DOSIO:関数の準備
-void dosio_init(void);
-void dosio_term(void);
+
 							// ファイル操作
 FILEH File_Open(char* filename);
 FILEH File_Create(char* filename, int32_t ftype);
@@ -64,11 +62,6 @@ FILEH File_CreateCurDir(char* filename, int32_t ftype);
 int16_t File_AttrCurDir(char* filename);
 
 int32_t File_GetFType(char* filename);
-
-
-							// 日時の取得
-//void dosdateset(uint8_t *dat);
-//void dostimeset(uint8_t *dat);
 
 
 char* getFileName(char* filename);
@@ -155,9 +148,6 @@ void fname_mix(char* str, char* mix, int32_t size);
 #define DD_MONTH_SHIFT		5
 #define DD_YEAR_MASK		0xFE00	/* year - 1980 */
 #define DD_YEAR_SHIFT		9
-
-//void unix2dostime(time_t t, uint16_t *ddp, uint16_t *dtp, uint8_t *dhp);
-//void dos2unixtime(uint32_t dd, uint32_t dt, uint32_t dh, time_t *tp);
 
 #ifdef __cplusplus
 };

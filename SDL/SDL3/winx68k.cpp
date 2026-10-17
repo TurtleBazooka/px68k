@@ -709,7 +709,7 @@ int main(int argc, char *argv[])
 	if (set_modulepath((char *)winx68k_dir, sizeof(winx68k_dir)))
 		return 1;
 
-	dosio_init();
+	//dosio_init();
 	File_Setcd(winx68k_dir);
     p6logd("%s\n",winx68k_dir);
 
@@ -767,6 +767,7 @@ int main(int argc, char *argv[])
 		p6logd("Cαn`t Create sdl_window: %ld", sdl_window);
 	}
 
+	winx=Config.WinPosX; winy=Config.WinPosY;
 	SDL_SetWindowPosition(sdl_window, winx, winy);
 
 	/*Create Renderer */

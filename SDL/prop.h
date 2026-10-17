@@ -81,11 +81,8 @@ typedef struct
 
 extern Win68Conf Config;
 
-extern int32_t winx , winy;
-
 void LoadConfig(void);
 void SaveConfig(void);
-void PropPage_Init(void);
 
 int32_t set_modulepath(char *path, size_t len);
 

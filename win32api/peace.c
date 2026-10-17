@@ -55,17 +55,6 @@ enum {
 	HTYPE_EVENT,
 	HTYPE_HWND,
 	HTYPE_MENU,
-#if 0
-	HTYPE_HDC,
-	HTYPE_BMP,
-	HTYPE_ICON,
-	HTYPE_FONT,
-	HTYPE_PALETTE,
-	HTYPE_PEN,
-	HTYPE_BRUSH,
-	HTYPE_RGN,
-	HTYPE_METAFILE,
-#endif
 	HTYPE_CONSOLE,
 	HTYPE_KEY,
 };
@@ -129,6 +118,61 @@ Get_msecCount(void)
   return(boottime_msec);
 }
 
+// SDL3 like for SDL2
+// File-Load/Save/Free
+void *
+File_Load(char* filename,size_t* size) // 一気読込み
+{
+	FILE *fp;
+
+	fp = fopen(filename, "rb");
+	if (fp == NULL)
+		return NULL;
+
+    fseek(fp, 0, SEEK_END);//file容量を調べる
+    long fsize = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+	char *buffer = (char *)malloc((size_t)fsize);//メモリ確保
+
+	fsize = fread( buffer , sizeof(char) , (size_t)fsize , fp );
+	fclose( fp );
+
+	if (fsize <= 0){
+		free(buffer);
+		return NULL;
+	}
+
+	*size = fsize;
+
+	return(buffer);
+}
+
+BOOL
+File_Save(char* filename,void* dp, size_t size)//一気書込み
+{
+	FILE *fp;
+
+	fp = fopen(filename, "wb");
+	if (fp == NULL)
+		return FALSE;
+
+	uint32_t fsize = (uint32_t)fwrite( dp, 1,size, fp);
+
+	fclose( fp );
+
+   return(TRUE);
+}
+
+void
+File_Free(void* fp)//一気解放
+{
+   free(fp);  
+}
+
+
+
+// old file util.
 BOOL
 ReadFile(void *h, void* buf, uint32_t len, uint32_t* lp, LPOVERLAPPED lpov)
 {
@@ -367,101 +411,3 @@ GlobalUnlock(HGLOBAL h)
 	return FALSE;
 }
 
-uint32_t
-GetPrivateProfileString(const char* sect, const char* key, const char* defvalue,
-			 char* buf, uint32_t len, const char* inifile)
-{
-	char lbuf[256];
-	FILE *fp;
-
-	if (sect == NULL
-	 || key == NULL
-	 || defvalue == NULL
-	 || buf == NULL
-	 || len == 0
-	 || inifile == NULL)
-		return 0;
-
-	memset(buf, 0, len);
-
-	fp = fopen(inifile, "rb");
-	if (fp == NULL)
-		goto nofile;
-	while (!feof(fp)) {
-		fgets(lbuf, sizeof(lbuf), fp);
-		/* XXX should be case insensitive */
-		if (lbuf[0] == '['
-		    && !strncasecmp(sect, &lbuf[1], strlen(sect))
-		    && lbuf[strlen(sect) + 1] == ']')
-			break;
-	}
-	if (feof(fp))
-		goto notfound;
-	while (!feof(fp)) {
-		fgets(lbuf, sizeof(lbuf), fp);
-		if (lbuf[0] == '[' && strchr(lbuf, ']'))
-			goto notfound;
-		/* XXX should be case insensitive */
-		if (!strncasecmp(key, lbuf, strlen(key))
-		    && lbuf[strlen(key)] == '=') {
-			char *dst, *src;
-			src = &lbuf[strlen(key) + 1];
-			dst = buf;
-			while (*src != '\r' && *src != '\n' && *src != '\0')
-				*dst++ = *src++;
-			*dst = '\0';
-			fclose(fp);
-			return (uint32_t)strlen(buf);
-		}
-	}
-notfound:
-	// printf(("[%s]:%s not found\n", sect, key));
-	fclose(fp);
-nofile:
-	strncpy(buf, defvalue, len);
-	/* not include nul */
-	return (uint32_t)strlen(buf);
-}
-
-uint32_t
-GetPrivateProfileInt(const char* sect, const char* key, int32_t defvalue, const char* inifile)
-{
-	char lbuf[256];
-	FILE *fp;
-
-	if (sect == NULL
-	 || key == NULL
-	 || inifile == NULL)
-		return 0;
-
-	fp = fopen(inifile, "rb");
-	if (fp == NULL)
-		goto nofile;
-	while (!feof(fp)) {
-		fgets((char *)lbuf, sizeof(lbuf), fp);
-		/* XXX should be case insensitive */
-		if (lbuf[0] == '['
-		    && !strncasecmp(sect, (char *)&lbuf[1], strlen(sect))
-		    && lbuf[strlen(sect) + 1] == ']')
-			break;
-	}
-	if (feof(fp))
-		goto notfound;
-	while (!feof(fp)) {
-		fgets((char *)lbuf, sizeof(lbuf), fp);
-		if (lbuf[0] == '[' && strchr((char *)lbuf, ']'))
-			goto notfound;
-		/* XXX should be case insensitive */
-		if (!strncasecmp(key, (char *)lbuf, strlen(key))
-		    && (char)lbuf[strlen(key)] == (char)'=') {
-			int32_t value;
-			sscanf((char *)&lbuf[strlen(key) + 1], "%d", &value);
-			fclose(fp);
-			return value;
-		}
-	}
-notfound:
-	fclose(fp);
-nofile:
-	return defvalue;
-}

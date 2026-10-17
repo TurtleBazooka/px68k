@@ -713,7 +713,7 @@ int main(int argc, char *argv[])
 	if (set_modulepath((char *)winx68k_dir, sizeof(winx68k_dir)))
 		return 1;
 
-	dosio_init();
+	//dosio_init();
 	File_Setcd(winx68k_dir);
     puts(winx68k_dir);
 
@@ -760,6 +760,7 @@ int main(int argc, char *argv[])
 	strcat(window_title," SDL2");
 	uint32_t flags = SDL_WINDOW_SHOWN;
 	if (Config.WinStrech == 1){flags |= SDL_WINDOW_RESIZABLE;} /*Windowサイズ変更可能？*/
+	winx=Config.WinPosX; winy=Config.WinPosY;
 	sdl_window = SDL_CreateWindow(window_title, winx, winy, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT, flags);
 	sdl_render = SDL_CreateRenderer( sdl_window ,-1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	SDL_RenderSetLogicalSize( sdl_render ,FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT);
