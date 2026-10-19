@@ -210,7 +210,10 @@ uint32_t
 GetPrivateProfileString(const char* title, const char* key, const char* defvalue, 
 						char* buf, uint32_t len, const char* buff)
 {
-	if (title == NULL || key == NULL || buff == NULL)	return 0;
+	if (title == NULL || key == NULL || buff == NULL){
+	  strncpy(buf,defvalue,len);
+	  return(uint32_t)strlen(buf);
+	}
 
 	uint32_t value;
 	char keyword[100];
@@ -243,8 +246,10 @@ uint32_t
 GetPrivateProfileInt(const char* title, const char* key, int32_t defvalue, const char* buff)
 {
 	char	buf[CFGLEN];
+	char	defv[20];
 
-	uint32_t ret = GetPrivateProfileString(title,key,"p",buf,sizeof(buf),buff);//文字列で取り出す
+	snprintf(defv, sizeof(defv), "%d\n", defvalue);// default value
+	uint32_t ret = GetPrivateProfileString(title,key,defv,buf,sizeof(buf),buff);//文字列で取り出す
 
 	if(ret!=0){
 	  int32_t value;
@@ -266,9 +271,8 @@ void LoadConfig(void)
 
 	buff = File_Load(winx68k_ini, &dt);// 一気読み
 	if(buff == NULL){
-	 printf("Load config Error.\n");
+	 p6logd("Load config Error.\n");
 	}
-	else{
 
 	Config.MenuLanguage = (int32_t)GetPrivateProfileInt((const char*)ini_title, "MenuLanguage", 0, buff);
 	Config.DisplayNo = (int32_t)GetPrivateProfileInt((const char*)ini_title, "DisplayNo", 0, buff);
@@ -408,9 +412,11 @@ void LoadConfig(void)
 		GetPrivateProfileString((const char*)ini_title, buf, "", (char *)Config.SCSIEXHDImage[i], MAX_PATH, buff);
 	}
 
-	File_Free(buff);// メモリ解放
+	if(buff != NULL){
+	  File_Free(buff);// メモリ解放
 	}
 
+  return;
 }
 
 // Save config File 
@@ -564,4 +570,5 @@ void SaveConfig(void)
 		printf("Config Save Error \n");
 	}
 
+  return;
 }
