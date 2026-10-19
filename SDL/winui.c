@@ -483,12 +483,12 @@ static void menu_create_flist(int32_t v)
 			Config.HDImage[drv - 2][0] = '\0';
 			Config.SCSIEXHDImage[drv - 2][0] = '\0';
 		}
-		//strcpy(mfl.dir[drv], cur_dir_str); いちいちカレントに戻さない方がいい！
+		//strncpy(mfl.dir[drv], cur_dir_str, MAX_PATH); いちいちカレントに戻さない方がいい！
 		return;
 	}
 
 	if (drv >= 2) {
-		strcpy(support, "HDFHDSMOS");/*SASI-HDD:HDF SCSI-HDD:HDS SCSI-MO:MOS*/
+		strncpy(support, "HDFHDSMOS", sizeof(support));/*SASI-HDD:HDF SCSI-HDD:HDS SCSI-MO:MOS*/
 	}
 
 	// This routine gets file lists.
@@ -499,7 +499,7 @@ static void menu_create_flist(int32_t v)
 	int32_t l, len;
 	char *n, ext[4], *p;
 	char ent_name[MAX_PATH];
-	char srt[100];
+	char srt[MAX_PATH];
 
 	dp = opendir(mfl.dir[drv]);
 	if(dp == NULL ) {return;} // xxx check if dp is null...
@@ -511,7 +511,7 @@ static void menu_create_flist(int32_t v)
 			break;
 		}
 		n = dent->d_name;
-		strcpy(ent_name, mfl.dir[drv]);
+		strncpy(ent_name, mfl.dir[drv], sizeof(ent_name));
 		strcat(ent_name, n);
 		stat(ent_name, &buf);
 
@@ -522,7 +522,7 @@ static void menu_create_flist(int32_t v)
 				i--;
 				continue;
 			}
-			strcpy(ext, n + len - 3);
+			strncpy(ext, n + len - 3, sizeof(ext));
 			upper(ext);	 /*拡張子判別用大文字変換*/
 			p = strstr(support, ext);
 			if (p == NULL || (p - support) % 3 != 0) {
@@ -544,7 +544,7 @@ static void menu_create_flist(int32_t v)
 			}
 		}
 
-		strcpy(mfl.name[i], n);
+		strncpy(mfl.name[i], n, MAX_PATH);
 		// set 1 if this is directory
 		mfl.type[i] = S_ISDIR(buf.st_mode)? 1 : 0;
 		printf("%s 0x%x\n", n, buf.st_mode);
@@ -556,16 +556,16 @@ static void menu_create_flist(int32_t v)
 	for(j=0; j<i; j++){
 		for(k=j+1; k<i; k++)
 		if (fnamecmp(mfl.name[j],mfl.name[k]) > 0){
-			strcpy(srt , mfl.name[j]);
-			strcpy(mfl.name[j] , mfl.name[k]);
-			strcpy(mfl.name[k] , srt);
+			strncpy(srt , mfl.name[j], sizeof(srt));
+			strncpy(mfl.name[j] , mfl.name[k], MAX_PATH);
+			strncpy(mfl.name[k] , srt, MAX_PATH);
 			l = mfl.type[j];
 			mfl.type[j] = mfl.type[k];
 			mfl.type[k] = l;
 		}
 	}
 
-	strcpy(mfl.name[i], "");
+	strncpy(mfl.name[i], "", MAX_PATH);
 	mfl.num = i;
 	mfl.ptr = 0;
 
