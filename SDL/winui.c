@@ -287,14 +287,14 @@ WinUI_Init(void)
 	char CUR_DIR_STR[] = {"/var/mobile/px68k/"};
 #else
 	char CUR_DIR_STR[MAX_PATH];
-	strcpy(CUR_DIR_STR, getenv("HOME"));
+	strncpy(CUR_DIR_STR, getenv("HOME"), sizeof(CUR_DIR_STR));
 #endif
 
 	if (filepath[0]!='\0') {
-		strcpy(cur_dir_str, filepath);
+		strncpy(cur_dir_str, filepath, sizeof(cur_dir_str));
 	}
 	else{
-		strcpy(cur_dir_str, CUR_DIR_STR);
+		strncpy(cur_dir_str, CUR_DIR_STR, sizeof(cur_dir_str));
 	}
 
 #ifdef _WIN32
@@ -309,7 +309,7 @@ WinUI_Init(void)
 	p6logd("cur_dir_str %s %d\n", cur_dir_str, cur_dir_slen);
 
 	for (i = 0; i < 4; i++) {
-		strcpy(mfl.dir[i], cur_dir_str);
+		strncpy(mfl.dir[i], cur_dir_str, MAX_PATH);
 	}
 }
 
@@ -499,7 +499,6 @@ static void menu_create_flist(int32_t v)
 	int32_t l, len;
 	char *n, ext[4], *p;
 	char ent_name[MAX_PATH];
-	char srt[MAX_PATH];
 
 	dp = opendir(mfl.dir[drv]);
 	if(dp == NULL ) {return;} // xxx check if dp is null...
@@ -556,9 +555,9 @@ static void menu_create_flist(int32_t v)
 	for(j=0; j<i; j++){
 		for(k=j+1; k<i; k++)
 		if (fnamecmp(mfl.name[j],mfl.name[k]) > 0){
-			strncpy(srt , mfl.name[j], sizeof(srt));
+			strncpy(ent_name , mfl.name[j], sizeof(ent_name));
 			strncpy(mfl.name[j] , mfl.name[k], MAX_PATH);
-			strncpy(mfl.name[k] , srt, MAX_PATH);
+			strncpy(mfl.name[k] , ent_name, MAX_PATH);
 			l = mfl.type[j];
 			mfl.type[j] = mfl.type[k];
 			mfl.type[k] = l;
@@ -939,30 +938,30 @@ int32_t WinUI_Menu(int32_t first)
 				// file operation
 				if (strlen(mfl.name[y]) != 0) {
 					char tmpstr[MAX_PATH];
-					strcpy(tmpstr, mfl.dir[drv]);
+					strncpy(tmpstr, mfl.dir[drv], sizeof(tmpstr));
 					strcat(tmpstr, mfl.name[y]);
 					if (drv < 2) {
 						FDD_SetFD(drv, tmpstr, 0);
-						strcpy((char *)Config.FDDImage[drv], tmpstr);
+						strncpy((char *)Config.FDDImage[drv], tmpstr, sizeof(Config.FDDImage[0]));
 					} else {
 						char strwork[MAX_PATH];
-						strcpy(strwork, tmpstr);
+						strncpy(strwork, tmpstr, sizeof(strwork));
 						upper(strwork);	 /*拡張子判別用大文字変換*/
 						p = strstr(strwork, ".HDS");
 						if (p == NULL ) {
 						  p = strstr(strwork, ".MOS");
 						  if (p == NULL ) {//HDF
-						   strcpy((char *)Config.HDImage[drv - 2], tmpstr);
+						   strncpy((char *)Config.HDImage[drv - 2], tmpstr, sizeof(Config.HDImage[0]));
 						   SRAM_SetSASIDrive(15);//Set SRAM for SASI boot drive
 						   Config.SCSIEXHDImage[drv - 2][0] = '\0';
 						  }
 						  else{//MOS
-						   strcpy((char *)Config.SCSIEXHDImage[5], tmpstr);// SCSI-ID=5
+						   strncpy((char *)Config.SCSIEXHDImage[5], tmpstr, sizeof(Config.SCSIEXHDImage[0]));// SCSI-ID=5
 						  }
 						}
 						else{//HDS
 						 Config.HDImage[drv - 2][0] = '\0';
-						 strcpy((char *)Config.SCSIEXHDImage[drv - 2], tmpstr);
+						 strncpy((char *)Config.SCSIEXHDImage[drv - 2], tmpstr, sizeof(Config.SCSIEXHDImage[0]));
 						 SRAM_SetSCSIMode(1);//Set SRAM for ExSCSI boot!
 						}
 					}
