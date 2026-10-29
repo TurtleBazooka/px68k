@@ -9,9 +9,7 @@ extern "C" {
 
 #include "common.h"
 #include "winx68k.h"
-//#include "dswin.h"
 #include "prop.h"
-//#include "juliet.h"
 #include "mfp.h"
 #include "adpcm.h"
 #include "mercury.h"
@@ -248,6 +246,8 @@ int32_t M288_Init(int32_t clock, int32_t rate, const char* path)
 		M288_Cleanup();
 		return FALSE;
 	}
+	ymf288a->LoadRhythmSample(path);
+	//ymf288b->LoadRhythmSample(path);
 	if ( (!ymf288a->Init(clock, rate, TRUE, path))||(!ymf288b->Init(clock, rate, TRUE, path)) ) {
 		M288_Cleanup();
 		return FALSE;

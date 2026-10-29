@@ -1,4 +1,5 @@
 //	$fmgen-Id: file.cpp,v 1.6 1999/12/28 11:14:05 cisc Exp $
+//  Mod. for px68k by kameya 2026/10/13
 
 #include "common.h"
 
@@ -26,35 +27,30 @@ FileIO::~FileIO()
 }
 
 // ---------------------------------------------------------------------------
-//	ファイルを開く
+//	ファイルを開く (OK:return TRUE)
 // ---------------------------------------------------------------------------
 
 bool FileIO::Open(const char* filename, uint32_t flg)
 {
-	Close();
+	BOOL ret = TRUE;
 
 	strncpy(path, filename, MAX_PATH);
 
-	uint32_t access = (flg & readonly ? 0 : GENERIC_WRITE) | GENERIC_READ;
-	uint32_t share = (flg & readonly) ? FILE_SHARE_READ : 0;
-	uint32_t creation = flg & create ? CREATE_ALWAYS : OPEN_EXISTING;
+	if (flg & readonly) { hfile = fopen(filename , "rb"); }
+	else{
+	 if (flg & create ) {  hfile = fopen(filename , "rwb+"); }
+	}
 
-	hfile = CreateFile(filename, access, share, 0, creation, 0, 0);
-	
-	flags = (flg & readonly) | (hfile == INVALID_HANDLE_VALUE ? 0 : open);
-	if (!(flags & open))
-	{
-		/*switch (GetLastError())
-		{
-		case ERROR_FILE_NOT_FOUND:		error = file_not_found; break;
-		case ERROR_SHARING_VIOLATION:	error = sharing_violation; break;
-		default: error = unknown; break;
-		}*/
+	flags = (flg & readonly) | (hfile == NULL ? 0 : open);
+
+	if(hfile == NULL){
 		error = file_not_found;
+		ret = FALSE;
 	}
 	SetLogicalOrigin(0);
 
-	return !!(flags & open);
+	return ret;
+
 }
 
 // ---------------------------------------------------------------------------
@@ -63,26 +59,14 @@ bool FileIO::Open(const char* filename, uint32_t flg)
 
 bool FileIO::CreateNew(const char* filename)
 {
-	Close();
 
-	strncpy(path, filename, MAX_PATH);
-
-	uint32_t access = GENERIC_WRITE | GENERIC_READ;
-	uint32_t share = 0;
-	uint32_t creation = CREATE_NEW;
-
-	hfile = CreateFile(filename, access, share, 0, creation, 0, 0);
-	
-	flags = (hfile == INVALID_HANDLE_VALUE ? 0 : open);
-	SetLogicalOrigin(0);
-
-	return !!(flags & open);
+	return(Open(filename, create));
 }
 
 // ---------------------------------------------------------------------------
 //	ファイルを作り直す
 // ---------------------------------------------------------------------------
-
+/*
 bool FileIO::Reopen(uint32_t flg)
 {
 	if (!(flags & open)) return false;
@@ -103,7 +87,7 @@ bool FileIO::Reopen(uint32_t flg)
 
 	return !!(flags & open);
 }
-
+*/
 // ---------------------------------------------------------------------------
 //	ファイルを閉じる
 // ---------------------------------------------------------------------------
@@ -112,7 +96,10 @@ void FileIO::Close()
 {
 	if (GetFlags() & open)
 	{
-		FAKE_CloseHandle(hfile);
+		if(hfile){
+		 fclose(hfile);
+		 hfile = NULL;
+		}
 		flags = 0;
 	}
 }
@@ -126,10 +113,11 @@ int32_t FileIO::Read(void* dest, int32_t size)
 	if (!(GetFlags() & open))
 		return -1;
 	
-	uint32_t readsize;
-	if (!ReadFile(hfile, dest, size, &readsize, 0))
+	if (fread(dest, 1, size, hfile) != 0){
 		return -1;
-	return readsize;
+	}
+
+	return size;
 }
 
 // ---------------------------------------------------------------------------
@@ -141,9 +129,11 @@ int32_t FileIO::Write(const void* dest, int32_t size)
 	if (!(GetFlags() & open) || (GetFlags() & readonly))
 		return -1;
 	
-	uint32_t writtensize;
-	if (!WriteFile(hfile, dest, size, &writtensize, 0))
+	int32_t writtensize = fwrite(dest, 1, size, hfile);
+	if (writtensize != size){
 		return -1;
+	}
+
 	return writtensize;
 }
 
@@ -159,20 +149,24 @@ bool FileIO::Seek(int32 pos, SeekMethod method)
 	uint32_t wmethod;
 	switch (method)
 	{
-	case begin:	
-		wmethod = FILE_BEGIN; pos += lorigin; 
+	case begin://先頭
+		wmethod = SEEK_SET;
 		break;
-	case current:	
-		wmethod = FILE_CURRENT; 
+	case current://現在
+		wmethod = SEEK_CUR; 
 		break;
-	case end:		
-		wmethod = FILE_END; 
+	case end: //最後
+		wmethod = SEEK_END; 
 		break;
 	default:
 		return false;
 	}
 
-	return 0xffffffff != SetFilePointer(hfile, pos, 0, wmethod);
+	if(0 == fseek(hfile, pos, wmethod)){//Seek正常＝0
+	 return TRUE;
+	}
+
+	return FALSE;
 }
 
 // ---------------------------------------------------------------------------
@@ -184,16 +178,17 @@ int32_t FileIO::Tellp()
 	if (!(GetFlags() & open))
 		return 0;
 
-	return SetFilePointer(hfile, 0, 0, FILE_CURRENT) - lorigin;
+	return ftell(hfile);
 }
 
 // ---------------------------------------------------------------------------
 //	現在の位置をファイルの終端とする
 // ---------------------------------------------------------------------------
-
+/*
 bool FileIO::SetEndOfFile()
 {
 	if (!(GetFlags() & open))
 		return false;
 	return ::SetEndOfFile(hfile) != 0;
 }
+*/

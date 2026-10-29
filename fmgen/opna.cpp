@@ -1209,7 +1209,7 @@ OPNA::~OPNA()
 bool OPNA::Init(uint32_t c, uint32_t r, bool ipflag, const char* path)
 {
 	rate = 8000;
-	LoadRhythmSample(path);
+	//LoadRhythmSample(path);
 	
 	if (!adpcmbuf)
 		adpcmbuf = new uint8_t[0x40000];
@@ -1334,6 +1334,7 @@ bool OPNA::LoadRhythmSample(const char* path)
 		rhythm[i].rate = whdr.rate;
 		rhythm[i].step = rhythm[i].rate * 1024 / rate;
 		rhythm[i].pos = rhythm[i].size = fsize * 1024;
+		file.Close();
 	}
 	if (i != 6)
 	{
@@ -1922,7 +1923,7 @@ Y288::~Y288()
 bool Y288::Init(uint32_t c, uint32_t r, bool ipflag, const char* path)
 {
 	rate = 8000;
-	LoadRhythmSample(path);
+	//LoadRhythmSample(path);
 
 	if (!SetRate(c, r, ipflag))
 		return false;
@@ -1933,7 +1934,7 @@ bool Y288::Init(uint32_t c, uint32_t r, bool ipflag, const char* path)
 
 	SetVolumeRhythmTotal(0);
 	for (int_fast16_t i=0; i<6; i++)
-		SetVolumeRhythm(0, 0);
+		SetVolumeRhythm(i, 0);
 
 	return true;
 }
@@ -2047,6 +2048,7 @@ bool Y288::LoadRhythmSample(const char* path)
 		rhythm[i].rate = whdr.rate;
 		rhythm[i].step = rhythm[i].rate * 1024 / rate;
 		rhythm[i].pos = rhythm[i].size = fsize * 1024;
+		file.Close();
 	}
 	if (i != 6)
 	{

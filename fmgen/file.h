@@ -51,7 +51,7 @@ public:
 	void SetLogicalOrigin(int32_t origin) { lorigin = origin; }
 
 private:
-	void *hfile;
+	FILE* hfile;
 	uint32_t flags;
 	uint32_t lorigin;
 	Error error;
