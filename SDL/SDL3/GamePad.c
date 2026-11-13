@@ -61,8 +61,8 @@ uint32_t CyberCount;
 #define CyberACK 0x40;
 
 // for Axis MAX,MIN
-#define SDL_AxisMIN -32768
-#define SDL_AxisMAX  32767
+#define SDL_AxisMIN INT16_MIN
+#define SDL_AxisMAX INT16_MAX
 
 // This stores whether the buttons were down. This avoids key repeats.
 uint8_t JoyDownState0;
@@ -449,14 +449,14 @@ void FASTCALL GamePadAxis_Update(int32_t which, uint8_t axis, int32_t value)
 	if(value>=0){
 	  if(value<5) value = 0;//ニュートラル
 	  else value -=5;
-	  if(127<value) value = 127;//最大値
+	  if(INT8_MAX<value) value = INT8_MAX;//最大値
 	}
 	else{
 	  if(value>-5) value = 0;//ニュートラル
 	  else value +=5;
-	  if(-128>value) value = -128;//最小値
+	  if(INT8_MIN>value) value = INT8_MIN;//最小値
 	}
-	uint8_t value8 = value + 128;// 0~255に正規化
+	uint8_t value8 = value - INT8_MIN;// 0~255に正規化
 
 	switch(axis){
 	case SDL_GAMEPAD_AXIS_LEFTY://Y軸

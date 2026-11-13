@@ -461,7 +461,7 @@ uint8_t FASTCALL MIDI_Read(uint32_t adr)
 	case 0xeafe00 ... 0xeaffff: /*CZ-6BG1(GPIB)*/
 	default:
 	 	BusErrFlag = 1;
-		return 0xff;
+		return 0x00;//大事!
 	}
 
 	switch(adr & 0x0f) /*CZ-6BM1(1st MIDI)*/

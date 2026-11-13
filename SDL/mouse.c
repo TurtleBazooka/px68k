@@ -91,22 +91,22 @@ void Mouse_SetData(void)
 
 		MouseSt = MouseStat;
 
-		if (x > 127) {
+		if (x > INT8_MAX) {
 			MouseSt |= 0x10;
-			MouseX = 127;
-		} else if (x < -128) {
+			MouseX = INT8_MAX;
+		} else if (x < INT8_MIN) {
 			MouseSt |= 0x20;
-			MouseX = -128;
+			MouseX = INT8_MIN;
 		} else {
 			MouseX = (int8_t)x;
 		}
 
-		if (y > 127) {
+		if (y > INT8_MAX) {
 			MouseSt |= 0x40;
-			MouseY = 127;
-		} else if (y < -128) {
+			MouseY = INT8_MAX;
+		} else if (y < INT8_MIN) {
 			MouseSt |= 0x80;
-			MouseY = -128;
+			MouseY = INT8_MIN;
 		} else {
 			MouseY = (int8_t)y;
 		}

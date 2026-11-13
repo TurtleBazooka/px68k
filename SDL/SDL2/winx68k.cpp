@@ -190,8 +190,8 @@ WinX68k_SCSICheck()
 	int32_t i;
 	uint16_t tmp;
 	FILEH fp;
-	static const char CZ6BS1IPLFILE[] = "scsiexrom.dat";
-	static const char SCSIINIPLFILE[] = "scsiinrom.dat";
+	static const char *CZ6BS1IPLFILE[] = {"scsiexrom.dat", "SCSIEXROM.DAT"};
+	static const char *SCSIINIPLFILE[] = {"scsiinrom.dat", "SCSIINROM.DAT"};
 
 
 	/*check IPL scsi=0:ExSCSI 1:InSCSI*/
@@ -208,7 +208,10 @@ WinX68k_SCSICheck()
 
 	// InSCSI(XVI/Compact/030) Append SCSI-IPL
 	if (scsi) {
-		fp = File_OpenCurDir((char *)SCSIINIPLFILE);/*InSCSI-IPL*/
+		fp = File_OpenCurDir((char *)SCSIINIPLFILE[0]);/*InSCSI-IPL*/
+		if (fp == 0) {
+		 fp = File_OpenCurDir((char *)SCSIINIPLFILE[1]);/*InSCSI-IPL(case-sensitive)*/
+		}
 		if (fp == 0) {
 			//p6logd("NO-SCSI-IPL for built-in.\n"); // No InSCSI-IPL
 			memset(IPL, 0, 0x10000);		// clear
@@ -227,7 +230,10 @@ WinX68k_SCSICheck()
 	}
 
 	// ExSCSI(origin X68000) CZ-6BS1を常に有効にする
-	fp = File_OpenCurDir((char *)CZ6BS1IPLFILE);/*ExSCSI-IPL*/
+	fp = File_OpenCurDir((char *)CZ6BS1IPLFILE[0]);/*ExSCSI-IPL*/
+	if (fp == 0) {
+	 fp = File_OpenCurDir((char *)CZ6BS1IPLFILE[1]);/*ExSCSI-IPL(case-sensitive)*/
+	}
 	if (fp == 0) {
 		//p6logd("NO-SCSI-IPL for CZ-6BS1.\n");// No CZ-6BS1-IPL
 		memset(SCSIIPL, 0, 0x02000);		// clear
@@ -275,10 +281,12 @@ int32_t
 WinX68k_LoadROMs(void)
 {
 	static const char *BIOSFILE[] = {
-		"iplrom.dat", "iplromxv.dat", "iplromco.dat", "iplrom30.dat"
+		"iplrom.dat",   "IPLROM.DAT",   "iplromxv.dat", "IPLROMXV.DAT",
+		"iplromco.dat", "IPLROMCO.DAT", "iplrom30.dat", "IPLROM30.DAT"
 	};
 	static const char *FONTFILE[] = {
-		"cgrom30.dat", "cgrom30.tmp", "cgrom.dat", "cgrom.tmp"
+		"cgrom30.dat", "CGROM30.DAT", "cgrom30.tmp", "CGROM30.TMP",
+		"cgrom.dat"  , "CGROM.DAT"  , "cgrom.tmp"  , "CGROM.TMP"
 	};
 	FILEH fp;
 	int32_t i,x68030=0;
@@ -297,10 +305,10 @@ WinX68k_LoadROMs(void)
 	else {
 	File_Read(fp, &IPL[0x20000], 0x20000);/*128K*/
 	File_Close(fp);
-	if(i==1) strcat(window_title," EXPERT");//ver 1.0
-	if(i==2) strcat(window_title," XVI");   //ver 1.1
-	if(i==3) strcat(window_title," XVIcpt");//ver 1.2
-	if(i==4){strcat(window_title," X68030");//ver 1.3
+	if((i==1)||(i==2)) strcat(window_title," EXPERT");//ver 1.0
+	if((i==3)||(i==4)) strcat(window_title," XVI");   //ver 1.1
+	if((i==5)||(i==6)) strcat(window_title," XVIcpt");//ver 1.2
+	if((i==7)||(i==8)){strcat(window_title," X68030");//ver 1.3
 	  x68030 = 1;
 	}
 	WinX68k_SCSICheck();	// Load SCSI IPL in:$fc0000～ ex:ea0000

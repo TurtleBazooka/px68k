@@ -938,7 +938,7 @@ uint32_t Get_FileSize(uint8_t SCSI_ID)
 		return FALSE;
 	}
 
-	uint32_t size = File_Seek(fp, SCSI_Blocks*SCSI_BlockSize, FSEEK_END);
+	uint32_t size = File_Seek(fp, 0, FSEEK_END);
 	if (size == 0xffffffff){//Error
 		File_Close(fp);
 		return FALSE;

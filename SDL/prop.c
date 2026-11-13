@@ -276,8 +276,8 @@ void LoadConfig(void)
 
 	Config.MenuLanguage = (int32_t)GetPrivateProfileInt((const char*)ini_title, "MenuLanguage", 0, buff);
 	Config.DisplayNo = (int32_t)GetPrivateProfileInt((const char*)ini_title, "DisplayNo", 0, buff);
-	Config.WinPosX = (int32_t)GetPrivateProfileInt((const char*)ini_title, "WinPosX", 20, buff);
-	Config.WinPosY = (int32_t)GetPrivateProfileInt((const char*)ini_title, "WinPosY", 20, buff);
+	Config.WinPosX = (int32_t)GetPrivateProfileInt((const char*)ini_title, "WinPosX", 50, buff);
+	Config.WinPosY = (int32_t)GetPrivateProfileInt((const char*)ini_title, "WinPosY", 50, buff);
 	Config.FrameRate = (uint8_t)GetPrivateProfileInt((const char*)ini_title, "FrameRate", 7, buff);
 	if (!Config.FrameRate) Config.FrameRate = 7;
 	Config.ram_size = (int32_t)(Memory_ReadB(0xed0009) & 0xf0)>>4; // from SRAM
