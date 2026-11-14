@@ -37,7 +37,7 @@ void PPI_Init(void)
 //==========================
 //   I/O Write (8255A)
 //==========================
-void FASTCALL PPI_Write(uint32_t adr, uint8_t data)
+void PPI_Write(uint32_t adr, uint8_t data)
 {
 	uint8_t mask, bit, portc;
 
@@ -83,7 +83,7 @@ void FASTCALL PPI_Write(uint32_t adr, uint8_t data)
 //==========================
 //   I/O Read (8255A)
 //==========================
-uint8_t FASTCALL PPI_Read(uint32_t adr)
+uint8_t PPI_Read(uint32_t adr)
 {
 	uint8_t ret=0xff;
 

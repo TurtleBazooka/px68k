@@ -315,8 +315,6 @@ if(APPLE)
   set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13.0")
   option(MACOSX_STANDALONE_APP_BUNDLE "Generate a portable app bundle to use on other devices (requires sudo)" OFF)
 
-  install_targets( ./bin ${BIN_TARGET} )
-
   if(MACOSX_STANDALONE_APP_BUNDLE)
       install(CODE "
         include(BundleUtilities)

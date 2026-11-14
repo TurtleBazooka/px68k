@@ -309,7 +309,7 @@ WinUI_Init(void)
 	p6logd("cur_dir_str %s %d\n", cur_dir_str, cur_dir_slen);
 
 	for (i = 0; i < 4; i++) {
-		strncpy(mfl.dir[i], cur_dir_str, MAX_PATH);
+		strncpy(mfl.dir[i], cur_dir_str, sizeof(mfl.dir[0]));
 	}
 }
 
@@ -483,7 +483,7 @@ static void menu_create_flist(int32_t v)
 			Config.HDImage[drv - 2][0] = '\0';
 			Config.SCSIEXHDImage[drv - 2][0] = '\0';
 		}
-		//strncpy(mfl.dir[drv], cur_dir_str, MAX_PATH); いちいちカレントに戻さない方がいい！
+		//strncpy(mfl.dir[drv], cur_dir_str, sizeof(mfl.dir[0])); いちいちカレントに戻さない方がいい！
 		return;
 	}
 
@@ -543,7 +543,7 @@ static void menu_create_flist(int32_t v)
 			}
 		}
 
-		strncpy(mfl.name[i], n, MAX_PATH);
+		strncpy(mfl.name[i], n, sizeof(mfl.name[0]));
 		// set 1 if this is directory
 		mfl.type[i] = S_ISDIR(buf.st_mode)? 1 : 0;
 		printf("%s 0x%x\n", n, buf.st_mode);
@@ -556,8 +556,8 @@ static void menu_create_flist(int32_t v)
 		for(k=j+1; k<i; k++)
 		if (fnamecmp(mfl.name[j],mfl.name[k]) > 0){
 			strncpy(ent_name , mfl.name[j], sizeof(ent_name));
-			strncpy(mfl.name[j] , mfl.name[k], MAX_PATH);
-			strncpy(mfl.name[k] , ent_name, MAX_PATH);
+			strncpy(mfl.name[j] , mfl.name[k], sizeof(mfl.name[0]));
+			strncpy(mfl.name[k] , ent_name, sizeof(mfl.name[0]));
 			l = mfl.type[j];
 			mfl.type[j] = mfl.type[k];
 			mfl.type[k] = l;

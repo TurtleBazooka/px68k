@@ -567,7 +567,7 @@ void SaveConfig(void)
 
 	//一括Write
 	if(TRUE != File_Save(winx68k_ini, config, strlen(config))){
-		printf("Config Save Error \n");
+		p6logd("Config Save Error \n");
 	}
 
   return;

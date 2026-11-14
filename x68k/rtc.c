@@ -31,7 +31,7 @@ void RTC_Init(void)
 // -----------------------------------------------------------------------
 //   とけいのりーど
 // -----------------------------------------------------------------------
-uint8_t FASTCALL RTC_Read(uint32_t adr)
+uint8_t RTC_Read(uint32_t adr)
 {
 	uint8_t ret = 0xff;
 	uint8_t tm24;
@@ -107,7 +107,7 @@ uint8_t FASTCALL RTC_Read(uint32_t adr)
 // -----------------------------------------------------------------------
 //   らいと (日付や時間のSetは行わない。保存するだけで使用しない)
 // -----------------------------------------------------------------------
-void FASTCALL RTC_Write(uint32_t adr, uint8_t data)
+void RTC_Write(uint32_t adr, uint8_t data)
 {
 	RTC_Bank = RTC_Regs[0][13] & 0x01;
 

@@ -6,14 +6,14 @@
 void MIDI_Init(void);
 void MIDI_Cleanup(void);
 void MIDI_Reset(void);
-uint8_t FASTCALL MIDI_Read(uint32_t adr);
-void FASTCALL MIDI_Write(uint32_t adr, uint8_t data);
+uint8_t MIDI_Read(uint32_t adr);
+void MIDI_Write(uint32_t adr, uint8_t data);
 void MIDI_SetModule(void);
-void FASTCALL MIDI_Timer(int32_t clk);
+void MIDI_Timer(int32_t clk);
 int32_t MIDI_SetMimpiMap(char *filename);
 int32_t MIDI_EnableMimpiDef(int32_t enable);
 void MIDI_DelayOut(uint32_t delay);
-int32_t FASTCALL MIDI_Int(uint8_t irq);
+int32_t MIDI_Int(uint8_t irq);
 
 extern uint8_t		Rx_buff[];
 extern int32_t		RxW_point;

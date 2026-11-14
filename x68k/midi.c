@@ -134,7 +134,7 @@ static uint8_t EXCV_XGRESET[] = { 0xf0, 0x43, 0x10, 0x4C, 0x00, 0x00, 0x7E, 0x00
 // -----------------------------------------------------------------------
 //   割り込み
 // -----------------------------------------------------------------------
-int32_t FASTCALL MIDI_Int(uint8_t irq)
+int32_t MIDI_Int(uint8_t irq)
 {
 	int32_t ret;
 	IRQH_IRQCallBack(irq);
@@ -154,7 +154,7 @@ int32_t FASTCALL MIDI_Int(uint8_t irq)
 // -----------------------------------------------------------------------
 //   たいまを進める
 // -----------------------------------------------------------------------
-void FASTCALL MIDI_Timer(int32_t clk)
+void MIDI_Timer(int32_t clk)
 {
 	if ( !Config.MIDI_SW ) return;	// MIDI OFF時は帰る
 
@@ -447,7 +447,7 @@ void  midi_data_out( uint8_t data )
 // -----------------------------------------------------------------------
 //   I/O Read
 // -----------------------------------------------------------------------
-uint8_t FASTCALL MIDI_Read(uint32_t adr)
+uint8_t MIDI_Read(uint32_t adr)
 {
 	uint8_t ret = 0x00;
 
@@ -641,7 +641,7 @@ void MIDI_DelayOut(uint32_t delay)
 // -----------------------------------------------------------------------
 //   I/O Write
 // -----------------------------------------------------------------------
-void FASTCALL MIDI_Write(uint32_t adr, uint8_t data)
+void MIDI_Write(uint32_t adr, uint8_t data)
 {
 	switch(adr)
 	{

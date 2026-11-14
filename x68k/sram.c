@@ -204,7 +204,7 @@ void SRAM_Cleanup(void)
 // -----------------------------------------------------------------------
 //   りーど(Read S-RAM)
 // -----------------------------------------------------------------------
-uint8_t FASTCALL SRAM_Read(uint32_t addr)
+uint8_t SRAM_Read(uint32_t addr)
 {
   addr &= 0xffff;
 
@@ -222,7 +222,7 @@ uint8_t FASTCALL SRAM_Read(uint32_t addr)
 // -----------------------------------------------------------------------
 //   らいと(Write S-RAM)
 // -----------------------------------------------------------------------
-void FASTCALL SRAM_Write(uint32_t adr, uint8_t data)
+void SRAM_Write(uint32_t adr, uint8_t data)
 {
 
 	if ( (SysPort[5]==0x31)&&(adr<0xed4000) )

@@ -126,7 +126,7 @@ void OPM_Reset(void)
 }
 
 
-uint8_t FASTCALL OPM_Read(void)
+uint8_t OPM_Read(void)
 {
 	uint8_t ret = 0;
 
@@ -136,7 +136,7 @@ uint8_t FASTCALL OPM_Read(void)
 }
 
 
-void FASTCALL OPM_Write(uint32_t adr, uint8_t data)
+void OPM_Write(uint32_t adr, uint8_t data)
 {
 	if ( opm ) opm->WriteIO(adr, data);
 }
@@ -149,7 +149,7 @@ void OPM_Update(int16_t *buffer, int32_t length, int16_t *pbsp, int16_t *pbep)
 }
 
 
-void FASTCALL OPM_Timer(uint32_t step)
+void OPM_Timer(uint32_t step)
 {
 	if ( opm ) opm->Count2(step);
 }
@@ -280,7 +280,7 @@ void M288_Reset(void)
 }
 
 
-uint8_t FASTCALL M288_Read(uint8_t adr)
+uint8_t M288_Read(uint8_t adr)
 {
 	if ( adr<=3 ) {
 		if ( ymf288a )
@@ -296,7 +296,7 @@ uint8_t FASTCALL M288_Read(uint8_t adr)
 }
 
 
-void FASTCALL M288_Write(uint8_t adr, uint8_t data)
+void M288_Write(uint8_t adr, uint8_t data)
 {
 	if ( adr<=3 ) {
 		if ( ymf288a ) ymf288a->WriteIO(adr, data);
@@ -313,7 +313,7 @@ void M288_Update(int16_t *buffer, int32_t length)
 }
 
 
-void FASTCALL M288_Timer(uint32_t step)
+void M288_Timer(uint32_t step)
 {
 	if ( ymf288a ) ymf288a->Count2(step);
 	if ( ymf288b ) ymf288b->Count2(step);

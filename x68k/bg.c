@@ -58,7 +58,7 @@ void BG_Init(void)
 // -----------------------------------------------------------------------
 //   I/O Read
 // -----------------------------------------------------------------------
-uint8_t FASTCALL BG_Read(uint32_t adr)
+uint8_t BG_Read(uint32_t adr)
 {
 	// 0xeb0000 ~ 0xebffff
 	switch(adr)
@@ -98,7 +98,7 @@ uint8_t FASTCALL BG_Read(uint32_t adr)
 	}							\
 }
 
-void FASTCALL BG_Write(uint32_t adr, uint8_t data)
+void BG_Write(uint32_t adr, uint8_t data)
 {
 	uint32_t bg16chr;
 	int32_t s1, s2, v = 0;
@@ -493,7 +493,7 @@ BG_DrawLineMcr16_ng(uint16_t BGTOP, uint32_t BGScrollX, uint32_t BGScrollY)
        bg_drawline_loopx16(BGTOP, BGScrollX, BGScrollY, 0, 1);
 }
 
-LABEL void FASTCALL
+LABEL void
 BG_DrawLine(int32_t opaq, int32_t gd)
 {
 	int_fast32_t i;

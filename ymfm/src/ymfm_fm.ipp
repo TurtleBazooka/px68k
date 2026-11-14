@@ -1522,7 +1522,7 @@ void fm_engine_base<RegisterType>::engine_timer_expired(uint32_t tnum)
 			}
 
 	// reset
-	m_timer_running[tnum] = false;
+	m_timer_running[tnum] = 0;//false;
 	update_timer(tnum, 1, 0);
 }
 
