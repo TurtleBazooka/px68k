@@ -13,10 +13,10 @@ extern	uint32_t	Pal32[65536];
 void Pal_SetColor(void);
 void Pal_Init(void);
 
-uint8_t FASTCALL Pal_Read(uint32_t adr);
-uint16_t FASTCALL Pal_Read16(uint32_t adr);
-void FASTCALL Pal_Write(uint32_t adr, uint8_t data);
-void FASTCALL Pal_Write16(uint32_t adr, uint16_t data);
+uint8_t  Pal_Read(uint32_t adr);
+uint16_t Pal_Read16(uint32_t adr);
+void Pal_Write(uint32_t adr, uint8_t data);
+void Pal_Write16(uint32_t adr, uint16_t data);
 
 void Pal_TrackContrast(void);
 void Pal_ChangeContrast(int32_t num);

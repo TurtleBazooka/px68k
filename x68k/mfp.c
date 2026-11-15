@@ -28,7 +28,7 @@ uint8_t keyREP_TIME;
 // -----------------------------------------------------------------------
 //   優先割り込みのチェックをし、該当ベクタを返す
 // -----------------------------------------------------------------------
-int32_t FASTCALL MFP_IntCallback(uint8_t irq)
+int32_t MFP_IntCallback(uint8_t irq)
 {
 	uint8_t flag;
 	int32_t vect;
@@ -152,7 +152,7 @@ void MFP_Init(void)
 // -----------------------------------------------------------------------
 //   I/O Read
 // -----------------------------------------------------------------------
-uint8_t FASTCALL MFP_Read(uint32_t adr)
+uint8_t MFP_Read(uint32_t adr)
 {
 	uint8_t ret = 0xff;
 	uint8_t reg = (uint8_t)((adr&0x3f)>>1);// Reg0~23(31)
@@ -228,7 +228,7 @@ uint8_t FASTCALL MFP_Read(uint32_t adr)
 // -----------------------------------------------------------------------
 //   I/O Write
 // -----------------------------------------------------------------------
-void FASTCALL MFP_Write(uint32_t adr, uint8_t data)
+void MFP_Write(uint32_t adr, uint8_t data)
 {
 	uint8_t reg=(uint8_t)((adr&0x3f)>>1);// Reg0~23(31)
 
@@ -313,7 +313,7 @@ int16_t timertrace = 0;
 // -----------------------------------------------------------------------
 //   たいまの時間を進める（も少し奇麗に書き直そう……）
 // -----------------------------------------------------------------------
-void FASTCALL MFP_Timer(int32_t clock)
+void MFP_Timer(int32_t clock)
 {
 	if ( (!(MFP[MFP_TACR]&8))&&(MFP[MFP_TACR]&7) ) {
 		int32_t t = Timer_Prescaler[MFP[MFP_TACR]&7];
@@ -369,7 +369,7 @@ void FASTCALL MFP_Timer(int32_t clock)
 }
 
 
-void FASTCALL MFP_TimerA(void)
+void MFP_TimerA(void)
 {
 	if ( (MFP[MFP_TACR]&15)==8 ) {					// いべんとかうんともーど（VDispでカウント）
 		if ( MFP[MFP_AER]&0x10 ) {				// VDisp割り込みとタイミングが違ってるのが気になるといえば気になる（ぉぃ

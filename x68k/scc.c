@@ -26,7 +26,7 @@ uint8_t SCC_DatNum = 0;
 // -----------------------------------------------------------------------
 //   わりこみ
 // -----------------------------------------------------------------------
-int32_t FASTCALL SCC_Int(uint8_t irq)
+int32_t SCC_Int(uint8_t irq)
 {
 	int32_t ret = -1;
 	IRQH_IRQCallBack(irq);
@@ -80,7 +80,7 @@ void SCC_Init(void)
 // -----------------------------------------------------------------------
 //   I/O Write (Z8530)
 // -----------------------------------------------------------------------
-void FASTCALL SCC_Write(uint32_t adr, uint8_t data)
+void SCC_Write(uint32_t adr, uint8_t data)
 {
 	/*0xe98000 ~ 0xe99fff*/
 	switch(adr & 0x07)
@@ -162,7 +162,7 @@ void FASTCALL SCC_Write(uint32_t adr, uint8_t data)
 // -----------------------------------------------------------------------
 //   I/O Read (Z8530)
 // -----------------------------------------------------------------------
-uint8_t FASTCALL SCC_Read(uint32_t adr)
+uint8_t SCC_Read(uint32_t adr)
 {
 	uint8_t ret=0xff;
 

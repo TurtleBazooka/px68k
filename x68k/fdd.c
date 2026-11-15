@@ -70,7 +70,7 @@ static int32_t GetDiskType(char* file)
 // -----------------------------------------------------------------------
 //   挿抜割り込み
 // -----------------------------------------------------------------------
-int32_t FASTCALL FDD_Int(uint8_t irq)
+int32_t FDD_Int(uint8_t irq)
 {
 	IRQH_IRQCallBack(irq);
 	if ( irq==1 ){

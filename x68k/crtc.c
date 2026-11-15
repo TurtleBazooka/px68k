@@ -87,7 +87,7 @@ void CRTC_RasterCopy(void)
 // 方も許されるのれす。
 // コットン起動時やYs（電波版）OPなどで使われてまふ。
 
-uint8_t FASTCALL VCtrl_Read(uint32_t adr)
+uint8_t VCtrl_Read(uint32_t adr)
 {
 	uint8_t ret = 0xff;
 	switch(adr & 0x701)
@@ -114,7 +114,7 @@ uint8_t FASTCALL VCtrl_Read(uint32_t adr)
 }
 
 
-void FASTCALL VCtrl_Write16(uint32_t adr, uint16_t data)
+void VCtrl_Write16(uint32_t adr, uint16_t data)
 {
 	switch(adr & 0x700)
 	{
@@ -152,7 +152,7 @@ void FASTCALL VCtrl_Write16(uint32_t adr, uint16_t data)
 	}
 }
 
-void FASTCALL VCtrl_Write(uint32_t adr, uint8_t data)
+void VCtrl_Write(uint32_t adr, uint8_t data)
 {
 
 	switch(adr & 0x701)
@@ -203,7 +203,7 @@ void CRTC_Init(void)
 	memset(GrphScrollY, 0, sizeof(GrphScrollY));
 }
 
-uint8_t FASTCALL CRTC_Read(uint32_t adr)
+uint8_t CRTC_Read(uint32_t adr)
 {
 	if(adr & 0x01){
 		return ((CRTC_Read16(adr & 0xfffffe)) & 0xff);
@@ -213,7 +213,7 @@ uint8_t FASTCALL CRTC_Read(uint32_t adr)
 	}
 }
 
-uint16_t FASTCALL CRTC_Read16(uint32_t adr)
+uint16_t CRTC_Read16(uint32_t adr)
 {
   uint16_t ret = 0xffff;
 
@@ -235,7 +235,7 @@ uint16_t FASTCALL CRTC_Read16(uint32_t adr)
 	return (uint16_t)ret;
 }
 
-void FASTCALL CRTC_Write(uint32_t adr, uint8_t data)
+void CRTC_Write(uint32_t adr, uint8_t data)
 {
 	if(adr & 0x01){
 	  CRTC_Write16(adr&0x00fffffe,(uint16_t)data,0x01);//奇数アドレス
@@ -245,7 +245,7 @@ void FASTCALL CRTC_Write(uint32_t adr, uint8_t data)
 	}
 }
 
-void FASTCALL CRTC_Write16(uint32_t adr, uint16_t data, uint8_t ulds)
+void CRTC_Write16(uint32_t adr, uint16_t data, uint8_t ulds)
 {
 	uint8_t reg = (uint8_t)(adr&0x3e);
 	int32_t old_vidmode = VID_MODE;

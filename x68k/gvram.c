@@ -51,7 +51,7 @@ void GVRAM_Init(void)
 //  高速クリア用ルーチン
 // -----------------------------------------------------------------------------------
 
-void FASTCALL GVRAM_FastClear(void)
+void GVRAM_FastClear(void)
 {
 	uint32_t v = ((CRTC_Regs[0x29]&4)?512:256);// SIZ
 	uint32_t h = ((CRTC_Regs[0x29]&3)?512:256);// COL
@@ -77,7 +77,7 @@ void FASTCALL GVRAM_FastClear(void)
 // -----------------------------------------------------------------------
 //   VRAM Read
 // -----------------------------------------------------------------------
-uint8_t FASTCALL GVRAM_Read(uint32_t adr)
+uint8_t GVRAM_Read(uint32_t adr)
 {
 	uint8_t ret=0;
 	uint8_t page;
@@ -140,7 +140,7 @@ uint8_t FASTCALL GVRAM_Read(uint32_t adr)
 // -----------------------------------------------------------------------
 //   VRAM Write
 // -----------------------------------------------------------------------
-void FASTCALL GVRAM_Write(uint32_t adr, uint8_t data)
+void GVRAM_Write(uint32_t adr, uint8_t data)
 {
 	uint8_t page;
 	int32_t line = 1023, scr = 0;
@@ -289,7 +289,7 @@ LABEL void Grp_DrawLine16(void)
 }
 
 
-LABEL void FASTCALL Grp_DrawLine8(int32_t page, int32_t opaq)
+LABEL void Grp_DrawLine8(int32_t page, int32_t opaq)
 {
 	uint16_t *srcp;
 	uint32_t *destp32;
@@ -381,7 +381,7 @@ LABEL void FASTCALL Grp_DrawLine8(int32_t page, int32_t opaq)
 }
 
 				// Manhattan Requiem Opening 7.0→7.5MHz
-LABEL void FASTCALL Grp_DrawLine4(uint32_t page, int32_t opaq)
+LABEL void Grp_DrawLine4(uint32_t page, int32_t opaq)
 {
 	uint16_t *srcp;	// XXX: ALIGN
 	uint32_t *destp32;
@@ -489,7 +489,7 @@ LABEL void FASTCALL Grp_DrawLine4(uint32_t page, int32_t opaq)
 }
 
 					// この画面モードは勘弁して下さい…
-void FASTCALL Grp_DrawLine4h(void)
+void Grp_DrawLine4h(void)
 {
 	uint16_t *srcp;
 	uint32_t *destp32;
@@ -534,7 +534,7 @@ void FASTCALL Grp_DrawLine4h(void)
 // -------------------------------------------------
 // --- 半透明／特殊Priのベースとなるページの描画 ---
 // -------------------------------------------------
-void FASTCALL Grp_DrawLine16SP(void)
+void Grp_DrawLine16SP(void)
 {
 	int32_t x, y;
 	uint32_t off;
@@ -568,7 +568,7 @@ void FASTCALL Grp_DrawLine16SP(void)
 }
 
 
-void FASTCALL Grp_DrawLine8SP(int32_t page)
+void Grp_DrawLine8SP(int32_t page)
 {
 	int32_t x, x0;
 	int32_t y, y0;
@@ -629,7 +629,7 @@ void FASTCALL Grp_DrawLine8SP(int32_t page)
 }
 
 
-void FASTCALL Grp_DrawLine4SP(uint32_t page/*, int opaq*/)
+void Grp_DrawLine4SP(uint32_t page/*, int opaq*/)
 {
 	uint32_t scrx, scry;
 	page &= 3;
@@ -707,7 +707,7 @@ void FASTCALL Grp_DrawLine4SP(uint32_t page/*, int opaq*/)
 }
 
 
-void FASTCALL Grp_DrawLine4hSP(void)
+void Grp_DrawLine4hSP(void)
 {
 	uint16_t *srcp;
 	int32_t x, y;
@@ -761,7 +761,7 @@ void FASTCALL Grp_DrawLine4hSP(void)
 // （れじすた足りないよぅ…）
 // -------------------------------------------------
 							// やけにすっきり
-LABEL void FASTCALL
+LABEL void
 Grp_DrawLine8TR(int32_t page, int32_t opaq)
 {
 	if (opaq) {
@@ -803,7 +803,7 @@ Grp_DrawLine8TR(int32_t page, int32_t opaq)
 
 }
 
-LABEL void FASTCALL
+LABEL void
 Grp_DrawLine8TR_GT(int32_t page, int32_t opaq)
 {
 	if (opaq) {
@@ -826,7 +826,7 @@ Grp_DrawLine8TR_GT(int32_t page, int32_t opaq)
 	}
 }
 
-LABEL void FASTCALL
+LABEL void
 Grp_DrawLine4TR(uint32_t page, int32_t opaq)
 {
 	int32_t x, y;

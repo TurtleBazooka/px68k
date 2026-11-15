@@ -564,7 +564,7 @@ static void menu_create_flist(int32_t v)
 		}
 	}
 
-	strncpy(mfl.name[i], "", MAX_PATH);
+	strncpy(mfl.name[i], "", sizeof(mfl.name[0]));
 	mfl.num = i;
 	mfl.ptr = 0;
 

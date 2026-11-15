@@ -1020,19 +1020,19 @@ int main(int argc, char *argv[])
 				}
 				break;
 #if defined(ANDROID) || TARGET_OS_IPHONE
-			case SDL_APP_WILLENTERBACKGROUND:
+			case SDL_EVENT_WILL_ENTER_BACKGROUND:
 				DSound_Pause();
 				break;
-			case SDL_APP_WILLENTERFOREGROUND:
+			case SDL_EVENT_WILL_ENTER_FOREGROUND:
 				DSound_Resume();
 				break;
-			case SDL_FINGERDOWN:
+			case SDL_EVENT_FINGER_DOWN:
 				//p6logd("FINGERDOWN: tid: %lld,,, x:%f y:%f", ev.tfinger.touchId, ev.tfinger.x, ev.tfinger.y);
 				if (touchId == -1) {
 					touchId = ev.tfinger.touchId;
 				}
 				break;
-			case SDL_FINGERMOTION:
+			case SDL_EVENT_FINGER_MOTION:
 				float kx, ky, dx, dy;
 				//p6logd("FM: x:%f y:%f dx:%f dy:%f\n", ev.tfinger.x, ev.tfinger.y, ev.tfinger.dx, ev.tfinger.dy);
 				if (vk_cnt == 0) {
@@ -1156,6 +1156,7 @@ int main(int argc, char *argv[])
 				break;
 			case SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION:
 			case SDL_EVENT_GAMEPAD_TOUCHPAD_UP:
+			case SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN:
 			case SDL_EVENT_GAMEPAD_UPDATE_COMPLETE:
 				break;
 			case SDL_EVENT_DROP_BEGIN:

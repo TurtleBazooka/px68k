@@ -67,7 +67,7 @@ PRN_Write(uint32_t adr, uint8_t val)
 // -----------------------------------------------------------------------
 //   りーど
 // -----------------------------------------------------------------------
-uint8_t FASTCALL IOC_Read(uint32_t adr)
+uint8_t IOC_Read(uint32_t adr)
 {
 	uint8_t IOC_str;
 
@@ -89,7 +89,7 @@ uint8_t FASTCALL IOC_Read(uint32_t adr)
 // -----------------------------------------------------------------------
 //   らいと
 // -----------------------------------------------------------------------
-void FASTCALL IOC_Write(uint32_t adr, uint8_t data)
+void IOC_Write(uint32_t adr, uint8_t data)
 {
 	/*== 0xe9c001 ~ e9c003==*/
 	switch( adr )

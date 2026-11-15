@@ -30,13 +30,13 @@ void CRTC_Init(void);
 
 void CRTC_RasterCopy(void);
 
-uint8_t  FASTCALL CRTC_Read(uint32_t adr);
-uint16_t FASTCALL CRTC_Read16(uint32_t adr);
-void FASTCALL CRTC_Write(uint32_t adr, uint8_t data);
-void FASTCALL CRTC_Write16(uint32_t adr, uint16_t data, uint8_t ulds);
+uint8_t  CRTC_Read(uint32_t adr);
+uint16_t CRTC_Read16(uint32_t adr);
+void     CRTC_Write(uint32_t adr, uint8_t data);
+void     CRTC_Write16(uint32_t adr, uint16_t data, uint8_t ulds);
 
-uint8_t FASTCALL VCtrl_Read(uint32_t adr);
-void FASTCALL VCtrl_Write(uint32_t adr, uint8_t data);
-void FASTCALL VCtrl_Write16(uint32_t adr, uint16_t data);
+uint8_t  VCtrl_Read(uint32_t adr);
+void  VCtrl_Write(uint32_t adr, uint8_t data);
+void  VCtrl_Write16(uint32_t adr, uint16_t data);
 
 #endif

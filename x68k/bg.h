@@ -8,15 +8,15 @@ extern	uint8_t  BG_DrawWork1[1024*1024];
 extern	uint32_t BG0ScrollX, BG0ScrollY;
 extern	uint32_t BG1ScrollX, BG1ScrollY;
 extern	uint32_t BG_AdrMask;
-extern	uint8_t	 BG_CHRSIZE;
-extern	uint8_t	 BG_Regs[0x12];
+extern	uint8_t  BG_CHRSIZE;
+extern	uint8_t  BG_Regs[0x12];
 extern	uint16_t BG_BG0TOP;
 extern	uint16_t BG_BG1TOP;
 extern	int32_t	 BG_HAdjust;
 extern	int32_t	 BG_VLINE;
 extern	int32_t	 VLINEBG;
 
-extern	uint8_t	 Sprite_DrawWork[1024*1024];
+extern	uint8_t  Sprite_DrawWork[1024*1024];
 
 extern	uint32_t BG_LineBuf32[1600];
 

@@ -60,10 +60,6 @@ uint32_t CyberTRX;
 uint32_t CyberCount;
 #define CyberACK 0x40;
 
-// for Axis MAX,MIN
-#define SDL_AxisMIN INT16_MIN
-#define SDL_AxisMAX INT16_MAX
-
 // This stores whether the buttons were down. This avoids key repeats.
 uint8_t JoyDownState0;
 uint8_t MouseDownState0;

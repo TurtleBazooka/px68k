@@ -42,7 +42,7 @@ extern int32_t BusErrFlag;
 //extern	m68k_regs regs;
 
 
-int32_t FASTCALL Mcry_IntCB(uint8_t irq)
+int32_t Mcry_IntCB(uint8_t irq)
 {
 	int32_t ret = -1;
 	IRQH_IRQCallBack(irq);
@@ -52,7 +52,7 @@ int32_t FASTCALL Mcry_IntCB(uint8_t irq)
 	return ret;
 }
 
-void FASTCALL Mcry_Int(void)
+void Mcry_Int(void)
 {
 	IRQH_Int(MCRY_IRQ, &Mcry_IntCB);
 }
@@ -72,7 +72,7 @@ int32_t Mcry_IsReady(void)
 // -----------------------------------------------------------------------
 //   MPU経過クロック時間分だけデータをバッファに溜める
 // -----------------------------------------------------------------------
-void FASTCALL Mcry_PreUpdate(int32_t clock)
+void Mcry_PreUpdate(int32_t clock)
 {
 	Mcry_PreCounter += (Mcry_ClockRate*clock);
 	while(Mcry_PreCounter>=10000000L)
@@ -87,7 +87,7 @@ void FASTCALL Mcry_PreUpdate(int32_t clock)
 // -----------------------------------------------------------------------
 //   DSoundからの要求分だけバッファを埋める
 // -----------------------------------------------------------------------
-void FASTCALL Mcry_Update(int16_t *buffer, int32_t length)
+void Mcry_Update(int16_t *buffer, int32_t length)
 {
 	int32_t data;
 
@@ -147,7 +147,7 @@ INLINE void Mcry_WriteOne(void)
 // -----------------------------------------------------------------------
 //   I/O Write
 // -----------------------------------------------------------------------
-void FASTCALL Mcry_Write(uint32_t adr, uint8_t data)
+void Mcry_Write(uint32_t adr, uint8_t data)
 {
 	/*== 0xecc000 ~ 0xecdfff==*/
 	switch(adr & 0xff)
@@ -228,7 +228,7 @@ void FASTCALL Mcry_Write(uint32_t adr, uint8_t data)
 // -----------------------------------------------------------------------
 //   I/O Read
 // -----------------------------------------------------------------------
-uint8_t FASTCALL Mcry_Read(uint32_t adr)
+uint8_t Mcry_Read(uint32_t adr)
 {
 	uint8_t ret = 0;
 

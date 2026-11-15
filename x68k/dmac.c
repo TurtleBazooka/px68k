@@ -42,7 +42,7 @@ void DMA_SetReadyCB(int32_t ch, int32_t (*func)(void))
 // -----------------------------------------------------------------------
 //   割り込みベクタを返す
 // -----------------------------------------------------------------------
-int32_t FASTCALL DMA_Int(uint8_t irq)
+int32_t DMA_Int(uint8_t irq)
 {
 	int32_t ret = -1;
 	int32_t bit = 0;
@@ -71,7 +71,7 @@ int32_t FASTCALL DMA_Int(uint8_t irq)
 // -----------------------------------------------------------------------
 //   I/O Read
 // -----------------------------------------------------------------------
-uint8_t FASTCALL DMA_Read(uint32_t adr)
+uint8_t DMA_Read(uint32_t adr)
 {
 	uint8_t* p;
 	uint32_t off = (adr & 0x3f);
@@ -110,7 +110,7 @@ uint8_t FASTCALL DMA_Read(uint32_t adr)
 // -----------------------------------------------------------------------
 //   I/O Write
 // -----------------------------------------------------------------------
-void FASTCALL DMA_Write(uint32_t adr, uint8_t data)
+void DMA_Write(uint32_t adr, uint8_t data)
 {
 	uint8_t* p;
 	uint32_t off = (adr & 0x3f);
@@ -219,7 +219,7 @@ void FASTCALL DMA_Write(uint32_t adr, uint8_t data)
 // -----------------------------------------------------------------------
 //   DMA実行
 // -----------------------------------------------------------------------
-int32_t FASTCALL DMA_Exec(int32_t ch)
+int32_t DMA_Exec(int32_t ch)
 {
 	uint32_t *src, *dst;
 

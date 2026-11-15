@@ -70,7 +70,7 @@ void TVRAM_Cleanup(void)
 // -----------------------------------------------------------------------
 //   読むなり
 // -----------------------------------------------------------------------
-uint8_t FASTCALL TVRAM_Read(uint32_t adr)
+uint8_t TVRAM_Read(uint32_t adr)
 {
 	adr &= 0x7ffff;
 	adr ^= 1;//M68000 is BigEndian
@@ -78,7 +78,7 @@ uint8_t FASTCALL TVRAM_Read(uint32_t adr)
 }
 
 
-uint16_t FASTCALL TVRAM_Read16(uint32_t adr)
+uint16_t TVRAM_Read16(uint32_t adr)
 {
 	adr &= 0x7fffe;
 	return(TVRAM[adr] | TVRAM[adr + 1]<<8);
@@ -117,7 +117,7 @@ INLINE void TVRAM_WriteByteMask(uint32_t adr, uint8_t data)
 // -----------------------------------------------------------------------
 //   書くなり
 // -----------------------------------------------------------------------
-void FASTCALL TVRAM_Write(uint32_t adr, uint8_t data)
+void TVRAM_Write(uint32_t adr, uint8_t data)
 {
 	adr &= 0x7ffff;
 	adr ^= 1; // M68000 is BigEndian
@@ -184,7 +184,7 @@ void FASTCALL TVRAM_Write(uint32_t adr, uint8_t data)
 // -----------------------------------------------------------------------
 //   らすたこぴー時のあっぷでーと
 // -----------------------------------------------------------------------
-void FASTCALL TVRAM_RCUpdate(void)
+void TVRAM_RCUpdate(void)
 {
 	uint32_t adr = ((int32_t)CRTC_Regs[0x2d]<<9);
 
@@ -223,7 +223,7 @@ void FASTCALL TVRAM_RCUpdate(void)
 // -----------------------------------------------------------------------
 //   1ライン描画
 // -----------------------------------------------------------------------
-void FASTCALL Text_DrawLine(int32_t opaq)
+void Text_DrawLine(int32_t opaq)
 {
 	int32_t addr;
 	int32_t x, y;

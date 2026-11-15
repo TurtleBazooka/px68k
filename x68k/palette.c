@@ -85,7 +85,7 @@ void Pal_Init(void)
 // -----------------------------------------------------------------------
 //   I/O Read
 // -----------------------------------------------------------------------
-uint16_t FASTCALL Pal_Read16(uint32_t adr)
+uint16_t Pal_Read16(uint32_t adr)
 {
 	if (adr<0xe82400){
 	  adr &= 0x0003fe;
@@ -94,7 +94,7 @@ uint16_t FASTCALL Pal_Read16(uint32_t adr)
 	return 0xffff;
 }
 
-uint8_t FASTCALL Pal_Read(uint32_t adr)
+uint8_t Pal_Read(uint32_t adr)
 {
 	if (adr<0xe82400){
 	  adr &= 0x0003ff;
@@ -106,7 +106,7 @@ uint8_t FASTCALL Pal_Read(uint32_t adr)
 // -----------------------------------------------------------------------
 //   I/O Write
 // -----------------------------------------------------------------------
-void FASTCALL Pal_Write16(uint32_t adr, uint16_t data)
+void Pal_Write16(uint32_t adr, uint16_t data)
 {
 
 	if (adr>=0xe82400) return;
@@ -128,7 +128,7 @@ void FASTCALL Pal_Write16(uint32_t adr, uint16_t data)
 	}
 }
 
-void FASTCALL Pal_Write(uint32_t adr, uint8_t data)
+void Pal_Write(uint32_t adr, uint8_t data)
 {
 	uint16_t pal;
 

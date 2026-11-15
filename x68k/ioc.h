@@ -7,8 +7,8 @@ extern	uint8_t	IOC_IntStat;
 extern	uint8_t	IOC_IntVect;
 
 void IOC_Init(void);
-uint8_t FASTCALL IOC_Read(uint32_t adr);
-void FASTCALL IOC_Write(uint32_t adr, uint8_t data);
-void FASTCALL PRN_Write(uint32_t adr, uint8_t data);
+uint8_t IOC_Read(uint32_t adr);
+void IOC_Write(uint32_t adr, uint8_t data);
+void PRN_Write(uint32_t adr, uint8_t data);
 
 #endif

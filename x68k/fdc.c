@@ -95,7 +95,7 @@ static FDC fdc;
 // -----------------------------------------------------------------------
 //   割り込みベクタ
 // -----------------------------------------------------------------------
-int32_t FASTCALL FDC_Int(uint8_t irq)
+int32_t FDC_Int(uint8_t irq)
 {
 	IRQH_IRQCallBack(irq);
 	if (irq==1)
@@ -435,7 +435,7 @@ static void FDC_WriteBuffer(void)
 // -----------------------------------------------------------------------
 //   I/O Read
 // -----------------------------------------------------------------------
-uint8_t FASTCALL FDC_Read(uint32_t adr)
+uint8_t FDC_Read(uint32_t adr)
 {
 	uint8_t ret = 0xff;
 
@@ -479,7 +479,7 @@ uint8_t FASTCALL FDC_Read(uint32_t adr)
 // -----------------------------------------------------------------------
 //   I/O Write
 // -----------------------------------------------------------------------
-void FASTCALL FDC_Write(uint32_t adr, uint8_t data)
+void FDC_Write(uint32_t adr, uint8_t data)
 {
 	/*== 0xe9400x ~ 0xe95ffx==*/
 	switch(adr & 0x07)

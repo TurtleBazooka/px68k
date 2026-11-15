@@ -36,10 +36,10 @@ extern uint8_t LastKey;
 //extern uint8_t KeyReadFlag;
 
 void MFP_Init(void);
-uint8_t FASTCALL MFP_Read(uint32_t adr);
-void FASTCALL MFP_Write(uint32_t adr, uint8_t data);
-void FASTCALL MFP_Timer(int32_t clock);
-void FASTCALL MFP_TimerA(void);
+uint8_t MFP_Read(uint32_t adr);
+void MFP_Write(uint32_t adr, uint8_t data);
+void MFP_Timer(int32_t clock);
+void MFP_TimerA(void);
 void MFP_Int(int32_t irq);
 
 extern uint8_t keyLED;

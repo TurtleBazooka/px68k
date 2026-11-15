@@ -14,10 +14,10 @@ void TVRAM_SetAllDirty(void);
 void TVRAM_Init(void);
 void TVRAM_Cleanup(void);
 
-uint8_t FASTCALL TVRAM_Read(uint32_t adr);
-uint16_t FASTCALL TVRAM_Read16(uint32_t adr);
-void FASTCALL TVRAM_Write(uint32_t adr, uint8_t data);
-void FASTCALL TVRAM_RCUpdate(void);
-void FASTCALL Text_DrawLine(int32_t opaq);
+uint8_t  TVRAM_Read(uint32_t adr);
+uint16_t TVRAM_Read16(uint32_t adr);
+void TVRAM_Write(uint32_t adr, uint8_t data);
+void TVRAM_RCUpdate(void);
+void Text_DrawLine(int32_t opaq);
 
 #endif

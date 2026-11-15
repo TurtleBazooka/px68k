@@ -39,11 +39,11 @@ typedef struct
 
 extern dmac_ch	DMA[4];
 
-int32_t FASTCALL DMA_Int(uint8_t irq);
-uint8_t FASTCALL DMA_Read(uint32_t adr);
-void FASTCALL DMA_Write(uint32_t adr, uint8_t data);
+int32_t DMA_Int(uint8_t irq);
+uint8_t DMA_Read(uint32_t adr);
+void    DMA_Write(uint32_t adr, uint8_t data);
 
-int32_t FASTCALL DMA_Exec(int32_t ch);
+int32_t DMA_Exec(int32_t ch);
 void DMA_Init(void);
 void DMA_SetReadyCB(int32_t ch, int32_t (*func)(void));
 
