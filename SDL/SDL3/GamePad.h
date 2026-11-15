@@ -36,8 +36,8 @@ typedef struct _vbtn_points {
 
 #define need_Vpad() (is_menu || Keyboard_IsSwKeyboard() || (!Config.JoyOrMouse && !sdl_joy))
 
-uint8_t FASTCALL GamePad_Read(uint8_t num);
-void FASTCALL GamePad_Write(uint8_t num, uint8_t data);
+uint8_t GamePad_Read(uint8_t num);
+void GamePad_Write(uint8_t num, uint8_t data);
 
 void GamePad_Init(void);
 void GamePad_Open(void);
@@ -47,8 +47,8 @@ void GamePad_Add(SDL_JoystickID padid);
 void GamePad_Removed(SDL_JoystickID padid);
 void GamePad_Remapped(SDL_JoystickID padid);
 
-void FASTCALL GamePadAxis_Update(int32_t which, uint8_t axis, int32_t value);
-void FASTCALL GamePadButton_Update(int32_t which, uint8_t button, uint8_t on );
+void GamePadAxis_Update(int32_t which, uint8_t axis, int32_t value);
+void GamePadButton_Update(int32_t which, uint8_t button, uint8_t on );
 void Menu_GamePad_Update( SDL_Keycode key );
 
 uint8_t get_joy_downstate(void);

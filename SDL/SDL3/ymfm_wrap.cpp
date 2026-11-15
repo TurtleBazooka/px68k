@@ -419,7 +419,7 @@ void OPM_Reset(void)
 
 // === OPM YM2151 Read Status ===
 //[busy]-------[TimerB flag][TimerA flag]
-uint8_t FASTCALL OPM_Read(void)
+uint8_t OPM_Read(void)
 {
 	uint8_t ret = (status & 0x03);
 
@@ -434,7 +434,7 @@ uint8_t FASTCALL OPM_Read(void)
 }
 
 // === OPM YM2151 Write ===
-void FASTCALL OPM_Write(uint32_t adr, uint8_t data)
+void OPM_Write(uint32_t adr, uint8_t data)
 {
 	uint16_t tmp;
 
@@ -494,7 +494,7 @@ void OPM_Update(int32_t *buffer, int32_t length )
 }
 
 // === OPM YM2151 Timer ===
-void FASTCALL OPM_Timer(uint32_t step)
+void OPM_Timer(uint32_t step)
 {
 
 	CurCount += step;
@@ -569,7 +569,7 @@ void M288_Reset(void)
 }
 
 
-uint8_t FASTCALL M288_Read(uint8_t adr)
+uint8_t M288_Read(uint8_t adr)
 {
 uint8_t ret = 0x00;
 
@@ -585,7 +585,7 @@ return ret;
 }
 
 uint8_t adr_A288,adr_B288;
-void FASTCALL M288_Write(uint8_t adr, uint8_t data)
+void M288_Write(uint8_t adr, uint8_t data)
 {
 	switch (adr & 0x03)
 	{
@@ -615,7 +615,7 @@ void M288_Update(int16_t *buffer, int32_t length)
 }
 
 
-void FASTCALL M288_Timer(uint32_t step)
+void M288_Timer(uint32_t step)
 {
 //	none(使ってる？)
 }
