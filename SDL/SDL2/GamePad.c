@@ -331,7 +331,7 @@ void GameController_Remapped(SDL_JoystickID padid)
 }
 
 // Read from X68000
-uint8_t FASTCALL GamePad_Read(uint8_t num)
+uint8_t GamePad_Read(uint8_t num)
 {
 	uint8_t joynum = num;
 	uint8_t ret0 = 0xff, ret1 = 0xff, ret;
@@ -422,7 +422,7 @@ uint8_t FASTCALL GamePad_Read(uint8_t num)
 }
 
 // Write from X68000
-void FASTCALL GamePad_Write(uint8_t num, uint8_t data)
+void GamePad_Write(uint8_t num, uint8_t data)
 {
 	if(num == 0){// PortA
 		if((JoyPortData[num]==0xff)&&(data == 0x00)){// PortA PC4 H→L
@@ -439,7 +439,7 @@ void FASTCALL GamePad_Write(uint8_t num, uint8_t data)
 }
 
 // GamePad Analog input for X68000 (like CyberStick)
-void FASTCALL GameControllerAxis_Update(int32_t which, uint8_t axis, int32_t value)
+void GameControllerAxis_Update(int32_t which, uint8_t axis, int32_t value)
 {
 	if(which != PadNo[0]) return; // Analog is Port0 only
 
@@ -481,7 +481,7 @@ void FASTCALL GameControllerAxis_Update(int32_t which, uint8_t axis, int32_t val
 }
 
 // GamePad Button for X68000 
-void FASTCALL GameControllerButton_Update(int32_t which, uint8_t button, uint8_t on )
+void GameControllerButton_Update(int32_t which, uint8_t button, uint8_t on )
 {
 	// Atari U D R L,A B (C D ThU ThD E1 E2)
 	uint8_t ret0 = 0, ret1 = 0;
@@ -574,7 +574,7 @@ return;
 }
 
 // Keyinput and GamePad for Menu Mode 
-void FASTCALL Menu_GameController_Update(SDL_Keycode key)
+void Menu_GameController_Update(SDL_Keycode key)
 {
 	uint8_t ret0 = 0xff;
 	static uint8_t pre_ret0 = 0xff;

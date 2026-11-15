@@ -11,7 +11,7 @@ int32_t DSound_Cleanup(void);
 
 void DSound_Play(void);
 void DSound_Stop(void);
-void FASTCALL DSound_Send0(int32_t clock);
+void DSound_Send0(int32_t clock);
 
 void DS_SetVolumeOPM(int32_t vol);
 void DS_SetVolumeADPCM(int32_t vol);

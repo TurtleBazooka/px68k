@@ -20,7 +20,7 @@ void WinDraw_ChangeMode(int32_t flg);
 
 void WinDraw_Cleanup(void);
 void WinDraw_Redraw(void);
-void FASTCALL WinDraw_Draw(void);
+void WinDraw_Draw(void);
 void WinDraw_ShowMenu(int32_t flag);
 void WinDraw_DrawLine(void);
 void WinDraw_HideSplash(void);

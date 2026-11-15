@@ -171,7 +171,7 @@ static void sound_send(int32_t length)
  return;
 }
 
-void FASTCALL DSound_Send0(int32_t clock)
+void DSound_Send0(int32_t clock)
 {
 	int32_t length = 0;
 	int32_t rate;
@@ -191,7 +191,7 @@ void FASTCALL DSound_Send0(int32_t clock)
 	sound_send(length);
 }
 
-static void FASTCALL DSound_Send(int32_t length)
+static void DSound_Send(int32_t length)
 {
 	int32_t rate;
 
@@ -309,7 +309,7 @@ DSound_Cleanup(void)
 	return TRUE;
 }
 
-void FASTCALL
+void
 DSound_Send0(int32_t clock)
 {
 }

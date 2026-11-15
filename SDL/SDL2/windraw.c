@@ -651,7 +651,7 @@ Update_Screen(uint32_t menu)
 
 /*描画バッファから表示バッファへの転送*/
 /* X68K VRAM to Screen buffer   */
-void FASTCALL
+void
 WinDraw_Draw(void)
 {
 
