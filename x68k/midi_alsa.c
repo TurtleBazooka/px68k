@@ -6,6 +6,11 @@
 #include "winui.h"
 #include "midi.h"
 
+// for  CZ-6BM1 I/F
+#include "midi.c"
+
+// for each machine.
+// for alsa Sound
 uint32_t
 midiOutShortMsg(HMIDIOUT hmo, uint32_t dwMsg)
 {

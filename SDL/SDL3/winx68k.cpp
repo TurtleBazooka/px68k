@@ -833,8 +833,8 @@ int main(int argc, char *argv[])
 	Timer_Init();
 
 	// MIDI_Init();
-	MIDI_SetMimpiMap((char *)Config.ToneMapFile);	// 音色設定ファイル使用反映
-	MIDI_EnableMimpiDef(Config.ToneMap);
+	//MIDI_SetMimpiMap((char *)Config.ToneMapFile);	// 音色設定ファイル使用反映
+	//MIDI_EnableMimpiDef(Config.ToneMap);
 
 	//Dummy SampleRate 
 	if(Config.SampleRate == 0) SoundSampleRate = 11025;

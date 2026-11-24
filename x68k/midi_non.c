@@ -1,80 +1,71 @@
 /*
  No Support for MIDI
+ (Not installed  CZ-6BM1 I/F)
 */
-#include "prop.h"
 #include "winui.h"
-#include "midi.h"
+#include "irqh.h"
+#include "x68kmemory.h"
 
-uint32_t
-midiOutShortMsg(HMIDIOUT hmo, uint32_t dwMsg)
+
+// No-interrupt
+int32_t MIDI_Int(uint8_t irq)
 {
-	(void)hmo;
-	(void)dwMsg;
-	return MMSYSERR_NOERROR;
+	return -1;
 }
 
-uint32_t
-midiOutLongMsg(HMIDIOUT hmo, LPMIDIHDR pmh, uint32_t cbmh)
+// No-timer
+void MIDI_Timer(int32_t clk)
 {
-	(void)hmo;
-	(void)pmh;
-	(void)cbmh;
-	return MMSYSERR_NOERROR;
+	return;
 }
 
-uint32_t
-midiOutUnprepareHeader(HMIDIOUT hmo, LPMIDIHDR pmh, uint32_t cbmh)
-{
-	(void)hmo;
-	(void)pmh;
-	(void)cbmh;
-	return MMSYSERR_NOERROR;
-}
 
-uint32_t
-midiOutPrepareHeader(HMIDIOUT hmo, LPMIDIHDR pmh, uint32_t cbmh)
-{
-	(void)hmo;
-	(void)pmh;
-	(void)cbmh;
-	return MMSYSERR_NOERROR;
-}
-
-uint32_t
-mid_outDevList(LPHMIDIOUT phmo)
-{
- return 0;
-}
-
-uint32_t
-mid_inDevList(LPHMIDIOUT phmo)
-{
- return 0;
-}
-
-uint32_t
-midiOutClose(HMIDIOUT hmo)
-{
-	(void)hmo;
-	return MMSYSERR_NOERROR;
-}
-
-uint32_t
-midiOutReset(HMIDIOUT hmo)
-{
-	(void)hmo;
-	return MMSYSERR_NOERROR;
-}
-
+// No-Change Port(Output)
 void
 midOutChg(uint32_t port_no, uint32_t bank)
 {
- return;
 }
 
+// No-Change Port(input)
 void
 midInChg(uint32_t port_no)
 {
- return;
 }
+
+// No-Output
+void MIDI_DelayOut(uint32_t delay)
+{
+}
+
+//   initialize(No Device)
+void MIDI_Init(void)
+{
+		 strcpy(menu_items[MIDI_OUT_menu_item][0],"No Device Found.");
+		 strcpy(menu_items[MIDI_OUT_menu_item][1],"\0"); /* Menu END*/
+
+		 strcpy(menu_items[MIDI_IN_menu_item][0],"No Device Found.");
+		 strcpy(menu_items[MIDI_IN_menu_item][1],"\0"); /* Menu END*/
+}
+
+//   Quit
+void MIDI_Cleanup(void)
+{
+}
+
+//  NO-I/O Read
+uint8_t MIDI_Read(uint32_t adr)
+{
+	BusErrFlag = 1;
+	BusErrAdr = adr;
+
+	return 0x00;
+}
+
+//   No-I/O Write
+void MIDI_Write(uint32_t adr, uint8_t data)
+{
+	BusErrFlag = 2;
+	BusErrAdr = adr;
+}
+
 

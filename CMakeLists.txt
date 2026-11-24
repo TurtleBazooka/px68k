@@ -140,7 +140,7 @@ set(x68k_sources
   x68k/bg.c
   x68k/adpcm.c
   x68k/mercury.c
-  x68k/midi.c
+#  x68k/midi.c
   win32api/dosio.c
   win32api/fake.c
   win32api/peace.c
