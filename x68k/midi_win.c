@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <mmsystem.h>
 #include <tchar.h>
+#pragma comment(lib,"winmm.lib")
 
 #include "prop.h"
 #include "winui.h"
@@ -77,7 +78,7 @@ static DELAYBUFITEM DelayBuf[MIDIDELAYBUF];
 static int32_t DBufPtrW = 0;
 static int32_t DBufPtrR = 0;
 
-#pragma comment(lib,"winmm.lib")
+
 
 // ------ reset command ------
 static uint8_t EXCV_LARESET[] = { 0xf0, 0x41, 0x10, 0x16, 0x12, 0x7f, 0x01, 0xf7};
@@ -584,8 +585,9 @@ uint8_t MIDI_Read(uint32_t adr)
 	case 0xeafb00 ... 0xeafbff: /*CZ-6BN1(parallel)*/
 	case 0xeafc00 ... 0xeafdff: /*CZ-6BF1(RS232C 5ch)*/
 	case 0xeafe00 ... 0xeaffff: /*CZ-6BG1(GPIB)*/
-	default:
+	default://rm_buserr
 	 	BusErrFlag = 1;
+		BusErrAdr = addr;
 		return 0x00;
 	}
 
@@ -780,8 +782,9 @@ void MIDI_Write(uint32_t adr, uint8_t data)
 	case 0xeafb00 ... 0xeafbff: /*CZ-6BN1(parallel)*/
 	case 0xeafc00 ... 0xeafdff: /*CZ-6BF1(RS232C 5ch)*/
 	case 0xeafe00 ... 0xeaffff: /*CZ-6BG1(GPIB)*/
-	default:
-	 	BusErrFlag = 1;
+	default://wm_buserr
+	 	BusErrFlag = 2;
+		BusErrAdr = addr;
 		return;
 	}
 
