@@ -587,7 +587,7 @@ uint8_t MIDI_Read(uint32_t adr)
 	case 0xeafe00 ... 0xeaffff: /*CZ-6BG1(GPIB)*/
 	default://rm_buserr
 	 	BusErrFlag = 1;
-		BusErrAdr = addr;
+		BusErrAdr = adr;
 		return 0x00;
 	}
 
@@ -784,7 +784,7 @@ void MIDI_Write(uint32_t adr, uint8_t data)
 	case 0xeafe00 ... 0xeaffff: /*CZ-6BG1(GPIB)*/
 	default://wm_buserr
 	 	BusErrFlag = 2;
-		BusErrAdr = addr;
+		BusErrAdr = adr;
 		return;
 	}
 
